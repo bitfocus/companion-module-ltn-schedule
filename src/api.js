@@ -51,6 +51,7 @@ exports.initAPI = function () {
 			if (message.apiSocketMessageId === 'api_authenticate') {
 				if (message.success) {
 					this.status(this.STATUS_OK, 'Connected & Authenticated')
+					this.debug('API Auth success')
 				} else {
 					this.status(this.STATUS_ERROR, 'Authentication failed')
 					this.log('Schedule API auth error')

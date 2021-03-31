@@ -4,6 +4,8 @@ LTN Schedule delivers simplified workflows for creating 24/7 linear programs fro
 
 ## Configuration
 
+To get a pair of credentials for the Schedule API, create a new user in the Schedule UI and assign the api user role to it. You can then use it to connect through this companion module.
+
 Setting | Description
 -----------------|---------------
 **Host** | Enter the hostname of your Schedule instance.

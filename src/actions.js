@@ -118,10 +118,9 @@ exports.executeAction = function (action) {
 			}
 	}
 
-	if (cmd && apiEndpoint) {
+	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
 		var requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
-		this.debug(requestString)
 		got
 			.get(requestString)
 			.then((res) => {
@@ -130,7 +129,6 @@ exports.executeAction = function (action) {
 				}
 			})
 			.catch((err) => {
-				this.debug('Network error', err)
 				this.status(this.STATUS_ERROR, err)
 				this.debug('Schedule API err:' + JSON.stringify(err))
 			})
