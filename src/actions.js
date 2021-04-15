@@ -1,5 +1,4 @@
 const got = require('got')
-const _ = require('lodash')
 
 exports.getActions = function () {
 	var self = this

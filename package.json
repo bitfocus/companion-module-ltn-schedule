@@ -4,8 +4,9 @@
   "description": "LTN Global Schedule module for Companion",
   "shortname": "Schedule",
   "keywords": [
-		"Schedule", "Playout"
-	],
+    "Schedule",
+    "Playout"
+  ],
   "manufacturer": "LTN Global",
   "product": "Schedule",
   "main": "index.js",
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/bitfocus/companion-module-ltn-schedule/issues"
   },
-  "homepage": "https://github.com/bitfocus/companion-module-ltn-schedule#readme"
+  "homepage": "https://github.com/bitfocus/companion-module-ltn-schedule#readme",
+  "dependencies": {
+    "got": "^11.8.2",
+    "ws": "^7.4.4"
+  }
 }
