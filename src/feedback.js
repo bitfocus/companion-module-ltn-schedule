@@ -13,7 +13,8 @@ exports.initFeedbacks = function () {
 		multiple: true,
 		label: 'Push Targets',
 		id: 'targets',
-		choices: this.data.targets,
+		default: 'select',
+		choices: this.data.targets.concat({ id: 'select', label: 'Select a target' }),
 	}
 
 	const foregroundColor = {
@@ -158,14 +159,17 @@ exports.initFeedbacks = function () {
 
 exports.executeFeedback = function (feedback, bank) {
 	if (feedback.type === 'targetsStatus') {
+		var actualSelectedTargets = feedback.options.targets.filter((target) => target !== 'select')
 		var someDisabled = this.data.targets
-			.filter((target) => feedback.options.targets.some((selected) => selected === target.id))
+			.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
 			.some((target) => !target.enabled)
 		var someProblem = this.data.targets
-			.filter((target) => feedback.options.targets.some((selected) => selected === target.id))
+			.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
 			.some((target) => target.status != 2)
 
-		if (this.data.publishRunning) {
+		if (actualSelectedTargets.length === 0) {
+			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
+		} else if (this.data.publishRunning) {
 			if (someDisabled) {
 				return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
 			} else if (someProblem) {

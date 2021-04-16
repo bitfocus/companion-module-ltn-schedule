@@ -30,7 +30,8 @@ exports.getActions = function () {
 					label: 'Push Targets',
 					id: 'targetsSelect',
 					tooltip: 'What push targets do you want to toggle?',
-					choices: self.data.targets,
+					default: 'select',
+					choices: self.data.targets.concat({ id: 'select', label: 'Select a target' }),
 				},
 			],
 		},
@@ -87,16 +88,19 @@ exports.executeAction = function (action) {
 			}
 			break
 		case 'targets_toggle':
+			var actualSelectedTargets = opt.targetsSelect.filter((target) => target !== 'select')
 			var someDisabled = this.data.targets
-				.filter((target) => opt.targetsSelect.some((selected) => selected === target.id))
+				.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
 				.some((target) => !target.enabled)
 
-			if (someDisabled) {
-				apiEndpoint = 'targets/start'
-			} else {
-				apiEndpoint = 'targets/stop'
+			if (actualSelectedTargets.length > 0) {
+				if (someDisabled) {
+					apiEndpoint = 'targets/start'
+				} else {
+					apiEndpoint = 'targets/stop'
+				}
+				cmd = '?id=' + actualSelectedTargets.join('&id=')
 			}
-			cmd = '?id=' + opt.targetsSelect.join('&id=')
 			break
 		case 'playback_skip':
 			if (!this.data.skipUsed) {
