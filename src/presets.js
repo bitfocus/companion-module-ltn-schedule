@@ -44,16 +44,22 @@ exports.initPresets = function () {
 			text: 'Toggle playback',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(0, 0, 0),
+			bgcolor: self.rgb(91, 198, 233),
 		},
 		actions: [
 			{
 				action: 'playback_toggle',
+				options: {
+					startstamp: 0,
+				},
 			},
 		],
 		feedbacks: [
 			{
 				type: 'playbackStatus',
+				style: {
+					bgcolor: self.rgb(231, 88, 59),
+				}
 			},
 		],
 	})
@@ -93,6 +99,9 @@ exports.initPresets = function () {
 		actions: [
 			{
 				action: 'playback_skip',
+				options: {
+					strategy: 'snap',
+				},
 			},
 		],
 		feedbacks: [

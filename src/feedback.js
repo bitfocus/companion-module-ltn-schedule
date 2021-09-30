@@ -25,23 +25,12 @@ exports.initFeedbacks = function () {
 	}
 
 	feedbacks.playbackStatus = {
+		type: 'boolean',
 		label: 'Playout running status',
 		description: 'Indicates if the playout is running',
-		options: [
-			foregroundColor,
-			{
-				type: 'colorpicker',
-				label: 'Playback not running',
-				id: 'bgDisabled',
-				default: lightBlue,
-			},
-			{
-				type: 'colorpicker',
-				label: 'Playback running',
-				id: 'bgEnabled',
-				default: red,
-			},
-		],
+		style: {
+			bgcolor: red
+		}
 	}
 
 	feedbacks.targetsStatus = {
@@ -185,11 +174,7 @@ exports.executeFeedback = function (feedback, bank) {
 			}
 		}
 	} else if (feedback.type === 'playbackStatus') {
-		if (this.data.playoutRunning) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgEnabled }
-		} else {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
-		}
+		return this.data.playoutRunning
 	} else if (feedback.type === 'publishStatus') {
 		if (this.data.playoutRunning && this.data.publishRunning) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgPushing }
@@ -209,7 +194,7 @@ exports.executeFeedback = function (feedback, bank) {
 	} else if (feedback.type === 'adTriggerStatus') {
 		if (this.data.adRunning != 0) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgPushing }
-		} else if (this.data.currentItemType === 'livestream' && this.data.playoutRunning) {
+		} else if (this.data.currentItemType === 'livestream' && this.data.publishRunning) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgEnabled }
 		} else {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }

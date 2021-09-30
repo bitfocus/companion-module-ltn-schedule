@@ -56,7 +56,7 @@ exports.initAPI = function () {
 					this.status(this.STATUS_ERROR, 'Authentication failed')
 					this.log('Schedule API auth error')
 				}
-			} else if (message._messageId === 'pushTargetUpdate' && typeof message.pushTargetsList !== 'undefined') {
+			} else if (message.messageId === 'pushTargetUpdate' && typeof message.pushTargetsList !== 'undefined') {
 				this.data.targets = []
 				message.pushTargetsList.forEach((target) => {
 					var localTarget = {}
@@ -70,18 +70,18 @@ exports.initAPI = function () {
 				this.init_feedbacks()
 				this.updatePresets()
 				this.checkFeedbacks('targetsStatus')
-			} else if (message._messageId === 'playout_update') {
+			} else if (message.messageId === 'playout_update') {
 				this.data.playoutRunning = message.playoutRunning
 				this.data.publishRunning = message.publishRunning
 				if (message.playoutItemIndex != -1) {
-					this.data.currentItemType = message.playoutList[message.playoutItemIndex].type
+					this.data.currentItemType = message.currentItemType
 				}
 				this.checkFeedbacks('playbackStatus')
 				this.checkFeedbacks('publishStatus')
 				this.checkFeedbacks('skippableStatus')
 				this.checkFeedbacks('adTriggerStatus')
 				this.checkFeedbacks('targetsStatus')
-			} else if (message._messageId === 'ad_triggered') {
+			} else if (message.messageId === 'ad_triggered') {
 				this.data.adRunning = message.adLength
 				if (this.adTimeout) {
 					clearTimeout(this.adTimeout)

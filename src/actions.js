@@ -37,6 +37,21 @@ exports.getActions = function () {
 		},
 		playback_skip: {
 			label: 'Skip a playback element',
+			options: [
+				{
+					type: 'dropdown',
+					multiple: false,
+					minSelection: 1,
+					label: 'Skip strategy',
+					id: 'strategy',
+					tooltip: 'What do you want the skipping behavior to be?',
+					default: 'snap',
+					choices: [
+						{ id: 'snap', label: 'Move all the following assets' },
+						{ id: 'fix_next', label: 'Skip to the next asset, and creates a gap after it' },
+					],
+				},
+			],
 		},
 		playback_ad: {
 			label: 'Trigger an ad',
@@ -105,7 +120,7 @@ exports.executeAction = function (action) {
 		case 'playback_skip':
 			if (!this.data.skipUsed) {
 				apiEndpoint = 'playout/skip'
-				cmd = ''
+				cmd = '?strategy=' + opt.strategy
 				this.data.skipUsed = true
 				setTimeout(() => {
 					this.data.skipUsed = false
