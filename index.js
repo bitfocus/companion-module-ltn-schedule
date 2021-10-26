@@ -27,7 +27,8 @@ class LTNScheduleInstance extends instance_skel {
 			],
 			currentItemType: '',
 			adRunning: 0,
-			skipUsed: false
+			skipUsed: false,
+			apiVersion: 0
 		}
 
 		this.config.host = this.config.host || ''

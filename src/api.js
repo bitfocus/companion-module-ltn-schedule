@@ -13,7 +13,7 @@ exports.initAPI = function () {
 		try {
 			// readyState 2 = CLOSING, readyState 3 = CLOSED
 			if (!ws || ws.readyState == 2 || ws.readyState == 3) {
-				if (this.config.host && this.config.host !== "") {
+				if (this.config.host && this.config.host !== '') {
 					startListeningSocket()
 				}
 			}
@@ -52,11 +52,19 @@ exports.initAPI = function () {
 				if (message.success) {
 					this.status(this.STATUS_OK, 'Connected & Authenticated')
 					this.debug('API Auth success')
+					if (message.apiVersion === '1') {
+						this.data.apiVersion = 1
+					} else {
+						this.data.apiVersion = 0
+					}
 				} else {
 					this.status(this.STATUS_ERROR, 'Authentication failed')
 					this.log('Schedule API auth error')
 				}
-			} else if (message.messageId === 'pushTargetUpdate' && typeof message.pushTargetsList !== 'undefined') {
+			} else if (
+				(message.messageId === 'pushTargetUpdate' || message._messageId === 'pushTargetUpdate') &&
+				typeof message.pushTargetsList !== 'undefined'
+			) {
 				this.data.targets = []
 				message.pushTargetsList.forEach((target) => {
 					var localTarget = {}
@@ -70,18 +78,22 @@ exports.initAPI = function () {
 				this.init_feedbacks()
 				this.updatePresets()
 				this.checkFeedbacks('targetsStatus')
-			} else if (message.messageId === 'playout_update') {
-				this.data.playoutRunning = message.playoutRunning
+			} else if (message.messageId === 'playout_update' || message._messageId === 'playout_update') {
+				this.data.playoutRunning = message.activated
 				this.data.publishRunning = message.publishRunning
 				if (message.playoutItemIndex != -1) {
-					this.data.currentItemType = message.currentItemType
+					if (this.data.apiVersion > 0) {
+						this.data.currentItemType = message.currentItemType
+					} else {
+						this.data.currentItemType = message.playoutList[message.playoutItemIndex].type
+					}
 				}
 				this.checkFeedbacks('playbackStatus')
 				this.checkFeedbacks('publishStatus')
 				this.checkFeedbacks('skippableStatus')
 				this.checkFeedbacks('adTriggerStatus')
 				this.checkFeedbacks('targetsStatus')
-			} else if (message.messageId === 'ad_triggered') {
+			} else if (message.messageId === 'ad_triggered' || message._messageId === 'ad_triggered') {
 				this.data.adRunning = message.adLength
 				if (this.adTimeout) {
 					clearTimeout(this.adTimeout)

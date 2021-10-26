@@ -2,6 +2,22 @@ const got = require('got')
 
 exports.getActions = function () {
 	var self = this
+	var skipOption = {}
+	if (self.data.apiVersion > 0) {
+		skipOption = {
+			type: 'dropdown',
+			multiple: false,
+			minSelection: 1,
+			label: 'Skip strategy',
+			id: 'strategy',
+			tooltip: 'What do you want the skipping behavior to be?',
+			default: 'snap',
+			choices: [
+				{ id: 'snap', label: 'Move all the following assets' },
+				{ id: 'fix_next', label: 'Skip to the next asset, and creates a gap after it' },
+			],
+		}
+	}
 	return {
 		playback_toggle: {
 			label: 'Toggle playback running',
@@ -37,21 +53,7 @@ exports.getActions = function () {
 		},
 		playback_skip: {
 			label: 'Skip a playback element',
-			options: [
-				{
-					type: 'dropdown',
-					multiple: false,
-					minSelection: 1,
-					label: 'Skip strategy',
-					id: 'strategy',
-					tooltip: 'What do you want the skipping behavior to be?',
-					default: 'snap',
-					choices: [
-						{ id: 'snap', label: 'Move all the following assets' },
-						{ id: 'fix_next', label: 'Skip to the next asset, and creates a gap after it' },
-					],
-				},
-			],
+			options: [skipOption],
 		},
 		playback_ad: {
 			label: 'Trigger an ad',
@@ -84,7 +86,7 @@ exports.executeAction = function (action) {
 				cmd = ''
 			} else {
 				apiEndpoint = 'playout/start'
-				if (opt.startstamp) {
+				if (opt.startstamp != "" && opt.startstamp != 0) {
 					cmd = '?timestamp=' + opt.startstamp
 				} else {
 					cmd = '?timestamp=NOW'
@@ -120,7 +122,12 @@ exports.executeAction = function (action) {
 		case 'playback_skip':
 			if (!this.data.skipUsed) {
 				apiEndpoint = 'playout/skip'
-				cmd = '?strategy=' + opt.strategy
+				if(this.data.apiVersion > 0){
+					cmd = '?strategy=' + opt.strategy
+				} else {
+					cmd = ''
+				}
+				
 				this.data.skipUsed = true
 				setTimeout(() => {
 					this.data.skipUsed = false
