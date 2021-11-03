@@ -79,7 +79,11 @@ exports.initAPI = function () {
 				this.updatePresets()
 				this.checkFeedbacks('targetsStatus')
 			} else if (message.messageId === 'playout_update' || message._messageId === 'playout_update') {
-				this.data.playoutRunning = message.activated
+				if (this.data.apiVersion > 0) {
+					this.data.playoutRunning = message.activated
+				} else {
+					this.data.playoutRunning = message.playoutRunning
+				}
 				this.data.publishRunning = message.publishRunning
 				if (message.playoutItemIndex != -1) {
 					if (this.data.apiVersion > 0) {
