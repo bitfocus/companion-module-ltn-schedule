@@ -27,7 +27,8 @@ class LTNScheduleInstance extends instance_skel {
 			],
 			currentItemType: '',
 			adRunning: 0,
-			skipUsed: false
+			skipUsed: false,
+			apiVersion: 0
 		}
 
 		this.config.host = this.config.host || ''
@@ -94,13 +95,21 @@ class LTNScheduleInstance extends instance_skel {
 	init_feedbacks() {
 		const feedbacks = initFeedbacks.bind(this)()
 		this.setFeedbackDefinitions(feedbacks)
-		this.checkFeedbacks('playoutRunning')
-		this.checkFeedbacks('targetsRunning')
+		this.checkFeedbacks('playbackStatus')
+		this.checkFeedbacks('targetsStatus')
 	}
 
 	// Execute feedback
 	feedback(feedback, bank) {
 		return executeFeedback.bind(this)(feedback, bank)
+	}
+
+	static GetUpgradeScripts() {
+		return [
+			instance_skel.CreateConvertToBooleanFeedbackUpgradeScript({
+				'playbackStatus': true,
+			})
+		]
 	}
 }
 

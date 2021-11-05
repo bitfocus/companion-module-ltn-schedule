@@ -1,13 +1,13 @@
 {
   "name": "ltn-schedule",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "LTN Global Schedule module for Companion",
   "shortname": "Schedule",
   "keywords": [
     "Schedule",
     "Playout"
   ],
-  "manufacturer": "LTN Global",
+  "manufacturer": "LTN",
   "product": "Schedule",
   "main": "index.js",
   "scripts": {
