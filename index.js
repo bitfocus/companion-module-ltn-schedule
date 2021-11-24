@@ -28,7 +28,8 @@ class LTNScheduleInstance extends instance_skel {
 			currentItemType: '',
 			adRunning: 0,
 			skipUsed: false,
-			apiVersion: 0
+			apiVersion: 0,
+			breakingNewsRunning: false
 		}
 
 		this.config.host = this.config.host || ''
@@ -52,6 +53,12 @@ class LTNScheduleInstance extends instance_skel {
 		this.actions()
 		this.config = config
 		initAPI.bind(this)()
+		this.init_feedbacks()
+		initPresets.bind(this)()
+	}
+
+	updateElements() {
+		this.actions()
 		this.init_feedbacks()
 		initPresets.bind(this)()
 	}

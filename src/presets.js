@@ -136,5 +136,30 @@ exports.initPresets = function () {
 		],
 	})
 
+	if (self.data.apiVersion > 1) {
+		presets.push({
+			category: 'Commands',
+			label: 'Toggle Breaking News',
+			bank: {
+				style: 'text',
+				text: 'Toggle Breaking News',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'breaking_news',
+				},
+			],
+			feedbacks: [
+				{
+					type: 'breakingNewsStatus',
+				},
+			],
+		})
+	}
+	
+
 	self.setPresetDefinitions(presets)
 }
