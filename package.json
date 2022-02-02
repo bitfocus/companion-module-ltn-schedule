@@ -1,30 +1,31 @@
 {
-  "name": "ltn-schedule",
-  "version": "1.1.0",
-  "description": "LTN Global Schedule module for Companion",
-  "shortname": "Schedule",
-  "keywords": [
-    "Schedule",
-    "Playout"
-  ],
-  "manufacturer": "LTN",
-  "product": "Schedule",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Raphaël Olivier",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bitfocus/companion-module-ltn-schedule.git"
-  },
-  "bugs": {
-    "url": "https://github.com/bitfocus/companion-module-ltn-schedule/issues"
-  },
-  "homepage": "https://github.com/bitfocus/companion-module-ltn-schedule#readme",
-  "dependencies": {
-    "got": "^11.8.2",
-    "ws": "^7.4.4"
-  }
+	"name": "ltn-schedule",
+	"version": "1.1.0",
+	"description": "LTN Global Schedule module for Companion",
+	"shortname": "Schedule",
+	"keywords": [
+		"Schedule",
+		"Playout"
+	],
+	"manufacturer": "LTN",
+	"product": "Schedule",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Raphaël Olivier",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-ltn-schedule.git"
+	},
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-ltn-schedule/issues"
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-ltn-schedule#readme",
+	"dependencies": {
+		"got": "^11.8.2",
+		"ws": "^7.4.4"
+	},
+	"api_version": "1.0.0"
 }
