@@ -18,7 +18,7 @@ exports.getActions = function () {
 			],
 		}
 	}
-	return {
+	var actions = {
 		playback_toggle: {
 			label: 'Toggle playback running',
 			options: [
@@ -72,6 +72,14 @@ exports.getActions = function () {
 			],
 		},
 	}
+
+	if (self.data.apiVersion > 1) {
+		actions.breaking_news = {
+			label: 'Toggle breaking news',
+		}
+	}
+
+	return actions
 }
 
 exports.executeAction = function (action) {
@@ -102,6 +110,16 @@ exports.executeAction = function (action) {
 					apiEndpoint = 'playout/publish'
 					cmd = ''
 				}
+			}
+			break
+		case 'breaking_news':
+			if (!this.data.breakingNewsRunning) {
+					apiEndpoint = 'breakingnews/start'
+					cmd = ''
+			}
+			else {
+					apiEndpoint = 'breakingnews/stop'
+					cmd = ''
 			}
 			break
 		case 'targets_toggle':

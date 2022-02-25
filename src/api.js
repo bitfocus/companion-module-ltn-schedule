@@ -54,7 +54,12 @@ exports.initAPI = function () {
 					this.debug('API Auth success')
 					if (message.apiVersion === '1') {
 						this.data.apiVersion = 1
-					} else {
+					} else if (message.apiVersion === '2')
+					{
+						this.data.apiVersion = 2
+						this.updateElements()
+					}
+					else {
 						this.data.apiVersion = 0
 					}
 				} else {
@@ -85,6 +90,10 @@ exports.initAPI = function () {
 					this.data.playoutRunning = message.playoutRunning
 				}
 				this.data.publishRunning = message.publishRunning
+				if (this.data.apiVersion > 1)
+				{
+					this.data.breakingNewsRunning = message.breakingNewsRunning
+				}
 				if (message.playoutItemIndex != -1) {
 					if (this.data.apiVersion > 0) {
 						this.data.currentItemType = message.currentItemType
@@ -97,6 +106,10 @@ exports.initAPI = function () {
 				this.checkFeedbacks('skippableStatus')
 				this.checkFeedbacks('adTriggerStatus')
 				this.checkFeedbacks('targetsStatus')
+				if(this.data.apiVersion > 1) {
+					this.checkFeedbacks('breakingNewsStatus')
+				}
+
 			} else if (message.messageId === 'ad_triggered' || message._messageId === 'ad_triggered') {
 				this.data.adRunning = message.adLength
 				if (this.adTimeout) {

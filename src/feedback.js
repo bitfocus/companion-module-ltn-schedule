@@ -33,6 +33,17 @@ exports.initFeedbacks = function () {
 		}
 	}
 
+	if(this.data.apiVersion > 1) {
+		feedbacks.breakingNewsStatus = {
+			type: 'boolean',
+			label: 'Breaking news running status',
+			description: 'Indicates if the breaking news are displayed',
+			style: {
+				bgcolor: red
+			}
+		}
+	}
+
 	feedbacks.targetsStatus = {
 		label: 'Targets publish status',
 		description: 'Indicate if all the selected targets are published',
@@ -175,6 +186,8 @@ exports.executeFeedback = function (feedback, bank) {
 		}
 	} else if (feedback.type === 'playbackStatus') {
 		return this.data.playoutRunning
+	} else if (feedback.type === 'breakingNewsStatus') {
+		return this.data.breakingNewsRunning
 	} else if (feedback.type === 'publishStatus') {
 		if (this.data.playoutRunning && this.data.publishRunning) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgPushing }
