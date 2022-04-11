@@ -73,9 +73,26 @@ exports.getActions = function () {
 		},
 	}
 
-	if (self.data.apiVersion > 1) {
+	if (self.data.apiVersion == 2) {
 		actions.breaking_news = {
-			label: 'Toggle breaking news',
+			label: 'Toggle breaking live',
+		}
+	}
+	else if (self.data.apiVersion > 2) {
+		actions.breaking_news = {
+			label: 'Toggle breaking live',
+			options: [
+				{
+					type: 'dropdown',
+					multiple: false,
+					minSelection: 0,
+					label: 'Live streams',
+					id: 'livestreamSelect',
+					tooltip: 'What livestream do you want to use?',
+					default: 'select',
+					choices: self.data.livestreams.concat({ id: 'select', label: 'Select a target' }),
+				},
+			],
 		}
 	}
 
@@ -120,6 +137,9 @@ exports.executeAction = function (action) {
 			else {
 					apiEndpoint = 'breakingnews/stop'
 					cmd = ''
+			}
+			if (this.data.apiVersion > 2) {
+				cmd = '?breakingliveId=' + opt.livestreamSelect
 			}
 			break
 		case 'targets_toggle':
