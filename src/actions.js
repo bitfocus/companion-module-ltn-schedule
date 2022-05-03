@@ -131,14 +131,14 @@ exports.executeAction = function (action) {
 			break
 		case 'breaking_news':
 			if (!this.data.breakingNewsRunning) {
-					apiEndpoint = 'breakingnews/start'
+					apiEndpoint = 'breakinglive/start'
 					cmd = ''
 			}
 			else {
-					apiEndpoint = 'breakingnews/stop'
+					apiEndpoint = 'breakinglive/stop'
 					cmd = ''
 			}
-			if (this.data.apiVersion > 2) {
+			if (this.data.apiVersion > 2 && opt.livestreamSelect !== 'select') {
 				cmd = '?breakingliveId=' + opt.livestreamSelect
 			}
 			break
