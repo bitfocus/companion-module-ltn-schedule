@@ -29,7 +29,14 @@ class LTNScheduleInstance extends instance_skel {
 			adRunning: 0,
 			skipUsed: false,
 			apiVersion: 0,
-			breakingNewsRunning: false
+			breakingNewsRunning: false,
+			breakingNewsCurrentId: '',
+			livestreams: [
+				{
+					id: 'fill',
+					title: 'fill'
+				}
+			]
 		}
 
 		this.config.host = this.config.host || ''

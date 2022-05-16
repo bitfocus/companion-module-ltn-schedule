@@ -59,6 +59,13 @@ exports.initAPI = function () {
 						this.data.apiVersion = 2
 						this.updateElements()
 					}
+					else if(message.apiVersion === '3')
+					{
+						this.data.apiVersion = 3
+					}
+					else if(typeof message.apiVersion !== 'undefined' ) {
+						this.data.apiVersion = Number.parseInt(message.apiVersion)
+					}
 					else {
 						this.data.apiVersion = 0
 					}
@@ -120,6 +127,16 @@ exports.initAPI = function () {
 					this.checkFeedbacks('adTriggerStatus')
 				}, message.adLength * 1000)
 				this.checkFeedbacks('adTriggerStatus')
+			} else if (message.messageId === 'livestreamUpdate' || message._messageId === 'livestreamUpdate') {
+				this.data.breakingNewsCurrentId = message.breakingNewsCurrentId
+				this.data.livestreams = []
+				message.livestreams.forEach((livestream) => {
+					var localLivestream = {}
+					localLivestream.id = livestream.id
+					localLivestream.label = livestream.title
+					this.data.livestreams.push(localLivestream)
+				})
+				this.actions()
 			}
 		})
 
