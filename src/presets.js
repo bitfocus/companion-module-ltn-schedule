@@ -136,6 +136,7 @@ exports.initPresets = function () {
 		],
 	})
 
+
 	if (self.data.apiVersion > 1) {
 		presets.push({
 			category: 'Commands',
@@ -158,6 +159,30 @@ exports.initPresets = function () {
 					style: {
 						bgcolor: self.rgb(231, 88, 59),
 					}
+				},
+			],
+		})
+	}
+
+	if (self.data.apiVersion > 3) {
+		presets.push({
+			category: 'Commands',
+			label: 'Cancel ad',
+			bank: {
+				style: 'text',
+				text: 'Cancel ad',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'cancel_ad',
+				},
+			],
+			feedbacks: [
+				{
+					type: 'adTriggerStatus',
 				},
 			],
 		})
