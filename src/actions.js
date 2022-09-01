@@ -181,8 +181,7 @@ exports.executeAction = function (action) {
 			}
 			break
 		case 'playback_ad':
-			this.debug("ad " + opt.adLength + " : " + this.data.adRunning + " : " + this.data.playoutRunning + " : " + this.data.currentItemType)
-			if (this.data.adRunning == 0 && this.data.playoutRunning && this.data.currentItemType === 'livestream') {
+			if (this.data.adRunning == 0 && this.data.playoutRunning && (this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)) {
 				apiEndpoint = 'playout/ad'
 				cmd = '?adLength=' + opt.adLength
 			}
@@ -197,7 +196,6 @@ exports.executeAction = function (action) {
 	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
 		var requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
-		this.debug("request string : " + requestString)
 		got
 			.get(requestString)
 			.then((res) => {
