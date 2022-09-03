@@ -1,6 +1,6 @@
 {
 	"name": "ltn-schedule",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "LTN Global Schedule module for Companion",
 	"shortname": "Schedule",
 	"keywords": [

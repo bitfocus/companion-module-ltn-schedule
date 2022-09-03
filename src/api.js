@@ -63,6 +63,10 @@ exports.initAPI = function () {
 					{
 						this.data.apiVersion = 3
 					}
+					else if(message.apiVersion === '4')
+					{
+						this.data.apiVersion = 4
+					}
 					else if(typeof message.apiVersion !== 'undefined' ) {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
 					}

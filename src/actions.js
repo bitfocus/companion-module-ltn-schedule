@@ -70,7 +70,7 @@ exports.getActions = function () {
 					range: false,
 				},
 			],
-		},
+		}
 	}
 
 	if (self.data.apiVersion == 2) {
@@ -93,6 +93,12 @@ exports.getActions = function () {
 					choices: self.data.livestreams.concat({ id: 'select', label: 'Select a target' }),
 				},
 			],
+		}
+	}
+	
+	if (self.data.apiVersion > 3) {
+		actions.cancel_ad = {
+			label: 'Cancel an ad',
 		}
 	}
 
@@ -175,9 +181,15 @@ exports.executeAction = function (action) {
 			}
 			break
 		case 'playback_ad':
-			if (this.data.adRunning == 0 && this.data.playoutRunning && this.data.currentItemType === 'livestream') {
+			if (this.data.adRunning == 0 && this.data.playoutRunning && (this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)) {
 				apiEndpoint = 'playout/ad'
 				cmd = '?adLength=' + opt.adLength
+			}
+			break
+		case `cancel_ad`:
+			if (this.data.apiVersion > 3) {
+				apiEndpoint = 'playout/cancelad'
+				cmd = ''
 			}
 	}
 

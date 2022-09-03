@@ -207,7 +207,7 @@ exports.executeFeedback = function (feedback, bank) {
 	} else if (feedback.type === 'adTriggerStatus') {
 		if (this.data.adRunning != 0) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgPushing }
-		} else if ((this.data.currentItemType === 'livestream' || this.data.breakingNewsRunning) && this.data.publishRunning) {
+		} else if ((this.data.currentItemType === 'livestream' || this.data.breakingNewsRunning || this.data.apiVersion > 3) && this.data.publishRunning) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgEnabled }
 		} else {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
