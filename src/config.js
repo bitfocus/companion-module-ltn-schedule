@@ -1,4 +1,4 @@
-exports.getConfigFields = function () {
+export function getConfigFields() {
 	return [
 		{
 			type: 'textinput',
@@ -7,7 +7,7 @@ exports.getConfigFields = function () {
 			width: 5,
 		},
 		{
-			type: 'text',
+			type: 'static-text',
 			id: 'info',
 			width: 12,
 			label: 'Information',

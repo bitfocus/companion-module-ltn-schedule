@@ -1,15 +1,11 @@
-exports.initFeedbacks = function () {
+import { combineRgb } from '@companion-module/base'
+import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black } from '../index.js'
+
+export function initFeedbacks() {
 	const feedbacks = {}
 
-	const lightBlue = this.rgb(91, 198, 233)
-	const lightBlueDisabled = this.rgb(63, 184, 223)
-	const darkGrey = this.rgb(27, 27, 27)
-	const lightGrey = this.rgb(117, 117, 117)
-	const green = this.rgb(93, 224, 130)
-	const red = this.rgb(231, 88, 59)
-
 	const targets = {
-		type: 'dropdown',
+		type: 'multidropdown',
 		multiple: true,
 		label: 'Push Targets',
 		id: 'targets',
@@ -21,31 +17,44 @@ exports.initFeedbacks = function () {
 		type: 'colorpicker',
 		label: 'Foreground color',
 		id: 'fg',
-		default: this.rgb(255, 255, 255),
+		default: black,
 	}
 
 	feedbacks.playbackStatus = {
 		type: 'boolean',
-		label: 'Playout running status',
+		name: 'Playout running status',
 		description: 'Indicates if the playout is running',
-		style: {
-			bgcolor: red
-		}
+		defaultStyle: {
+			bgcolor: red,
+		},
+		options: [],
+		callback: ({ options }) => {
+			if (this.data.playoutRunning) {
+				return true
+			}
+		},
 	}
 
-	if(this.data.apiVersion > 1) {
+	if (this.data.apiVersion > 1) {
 		feedbacks.breakingNewsStatus = {
 			type: 'boolean',
-			label: 'Breaking news running status',
+			name: 'Breaking news running status',
 			description: 'Indicates if the breaking news are displayed',
-			style: {
-				bgcolor: red
-			}
+			defaultStyle: {
+				bgcolor: red,
+			},
+			options: [],
+			callback: ({ options }) => {
+				if (this.data.breakingNewsRunning) {
+					return true
+				}
+			},
 		}
 	}
 
 	feedbacks.targetsStatus = {
-		label: 'Targets publish status',
+		type: 'advanced',
+		name: 'Targets publish status',
 		description: 'Indicate if all the selected targets are published',
 		options: [
 			targets,
@@ -75,10 +84,38 @@ exports.initFeedbacks = function () {
 				default: red,
 			},
 		],
+		callback: ({ options }) => {
+			var actualSelectedTargets = options.targets.filter((target) => target !== 'select')
+			var someDisabled = this.data.targets
+				.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
+				.some((target) => !target.enabled)
+			var someProblem = this.data.targets
+				.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
+				.some((target) => target.status != 2)
+
+			if (actualSelectedTargets.length === 0) {
+				return { color: options.fg, bgcolor: options.bgDisabled }
+			} else if (this.data.publishRunning) {
+				if (someDisabled) {
+					return { color: options.fg, bgcolor: options.bgDisabled }
+				} else if (someProblem) {
+					return { color: options.fg, bgcolor: options.bgPushingProblem }
+				} else {
+					return { color: options.fg, bgcolor: options.bgPushing }
+				}
+			} else {
+				if (someDisabled) {
+					return { color: options.fg, bgcolor: options.bgDisabled }
+				} else {
+					return { color: options.fg, bgcolor: options.bgEnabled }
+				}
+			}
+		},
 	}
 
 	feedbacks.publishStatus = {
-		label: 'Publish status',
+		type: 'advanced',
+		name: 'Publish status',
 		description: 'Indicate if the Schedule instance is currently publishing',
 		options: [
 			foregroundColor,
@@ -101,10 +138,20 @@ exports.initFeedbacks = function () {
 				default: red,
 			},
 		],
+		callback: ({ options }) => {
+			if (this.data.playoutRunning && this.data.publishRunning) {
+				return { color: options.fg, bgcolor: options.bgPushing }
+			} else if (this.data.playoutRunning) {
+				return { color: options.fg, bgcolor: options.bgEnabled }
+			} else {
+				return { color: options.fg, bgcolor: options.bgDisabled }
+			}
+		},
 	}
 
 	feedbacks.skippableStatus = {
-		label: 'Skippable status',
+		type: 'advanced',
+		name: 'Skippable status',
 		description: 'Indicate if a skip is possible',
 		options: [
 			foregroundColor,
@@ -127,10 +174,20 @@ exports.initFeedbacks = function () {
 				default: green,
 			},
 		],
+		callback: ({ options }) => {
+			if (this.data.skipUsed) {
+				return { color: options.fg, bgcolor: options.bgSkipped }
+			} else if (!this.data.playoutRunning) {
+				return { color: options.fg, bgcolor: options.bgDisabled }
+			} else {
+				return { color: options.fg, bgcolor: options.bgEnabled }
+			}
+		},
 	}
 
 	feedbacks.adTriggerStatus = {
-		label: 'Ad trigger status',
+		type: 'advanced',
+		name: 'Ad trigger status',
 		description: 'Indicate if an ad is or can be triggered',
 		options: [
 			foregroundColor,
@@ -153,64 +210,18 @@ exports.initFeedbacks = function () {
 				default: green,
 			},
 		],
+		callback: ({ options }) => {
+			if (this.data.adRunning != 0) {
+				return { color: options.fg, bgcolor: options.bgPushing }
+			} else if (
+				(this.data.currentItemType === 'livestream' || this.data.breakingNewsRunning || this.data.apiVersion > 3) &&
+				this.data.publishRunning
+			) {
+				return { color: options.fg, bgcolor: options.bgEnabled }
+			} else {
+				return { color: options.fg, bgcolor: options.bgDisabled }
+			}
+		},
 	}
 	return feedbacks
-}
-
-exports.executeFeedback = function (feedback, bank) {
-	if (feedback.type === 'targetsStatus') {
-		var actualSelectedTargets = feedback.options.targets.filter((target) => target !== 'select')
-		var someDisabled = this.data.targets
-			.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
-			.some((target) => !target.enabled)
-		var someProblem = this.data.targets
-			.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
-			.some((target) => target.status != 2)
-
-		if (actualSelectedTargets.length === 0) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
-		} else if (this.data.publishRunning) {
-			if (someDisabled) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
-			} else if (someProblem) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bgPushingProblem }
-			} else {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bgPushing }
-			}
-		} else {
-			if (someDisabled) {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
-			} else {
-				return { color: feedback.options.fg, bgcolor: feedback.options.bgEnabled }
-			}
-		}
-	} else if (feedback.type === 'playbackStatus') {
-		return this.data.playoutRunning
-	} else if (feedback.type === 'breakingNewsStatus') {
-		return this.data.breakingNewsRunning
-	} else if (feedback.type === 'publishStatus') {
-		if (this.data.playoutRunning && this.data.publishRunning) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgPushing }
-		} else if (this.data.playoutRunning) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgEnabled }
-		} else {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
-		}
-	} else if (feedback.type === 'skippableStatus') {
-		if (this.data.skipUsed) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgSkipped }
-		} else if (!this.data.playoutRunning) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
-		} else {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgEnabled }
-		}
-	} else if (feedback.type === 'adTriggerStatus') {
-		if (this.data.adRunning != 0) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgPushing }
-		} else if ((this.data.currentItemType === 'livestream' || this.data.breakingNewsRunning || this.data.apiVersion > 3) && this.data.publishRunning) {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgEnabled }
-		} else {
-			return { color: feedback.options.fg, bgcolor: feedback.options.bgDisabled }
-		}
-	}
 }

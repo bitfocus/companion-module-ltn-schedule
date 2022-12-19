@@ -1,193 +1,270 @@
-exports.initPresets = function () {
-	const presets = []
+import { combineRgb } from '@companion-module/base'
+import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black } from '../index.js'
+
+export function initPresets() {
+	const presets = {}
 	const pstSize = '18'
-	const self = this
-	self.data.targets
+	this.data.targets
 		.map((target) => {
 			return {
+				id: target.id,
+				type: 'button',
 				category: 'Push Targets',
-				label: target.label,
-				bank: {
-					style: 'text',
+				name: target.label,
+				options: {},
+				style: {
 					text: target.label,
 					size: pstSize,
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0),
+					bgcolor: combineRgb(0, 0, 0),
 				},
-				actions: [
+				steps: [
 					{
-						action: 'targets_toggle',
-						options: {
-							targetsSelect: [target.id],
-						},
+						down: [
+							{
+								actionId: 'targets_toggle',
+								options: {
+									targetsSelect: [target.id],
+								},
+							},
+						],
+						up: [],
 					},
 				],
 				feedbacks: [
 					{
-						type: 'targetsStatus',
+						feedbackId: 'targetsStatus',
 						options: {
 							targets: [target.id],
+							fg: black,
+							bgDisabled: darkGrey,
+							bgEnabled: lightGrey,
+							bgPushing: green,
+							bgPushingProblem: red,
 						},
 					},
 				],
 			}
 		})
 		.forEach((element) => {
-			presets.push(element)
+			presets[element.id] = element
 		})
 
-	presets.push({
+	presets.toggle_playback = {
 		category: 'Commands',
-		label: 'Toggle Playback',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Toggle Playback',
+		options: {},
+		style: {
 			text: 'Toggle playback',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(91, 198, 233),
+			bgcolor: combineRgb(91, 198, 233),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'playback_toggle',
-				options: {
-					startstamp: 0,
-				},
+				down: [
+					{
+						actionId: 'playback_toggle',
+						options: {
+							startstamp: 0,
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'playbackStatus',
+				feedbackId: 'playbackStatus',
 				style: {
-					bgcolor: self.rgb(231, 88, 59),
-				}
+					bgcolor: combineRgb(231, 88, 59),
+				},
+				options: {},
 			},
 		],
-	})
+	}
 
-	presets.push({
+	presets.toggle_publish = {
 		category: 'Commands',
-		label: 'Toggle Publish',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Toggle Publish',
+		options: {},
+		style: {
 			text: 'Toggle publish',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'publish_toggle',
+				down: [
+					{
+						actionId: 'publish_toggle',
+						options: {},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'publishStatus',
+				feedbackId: 'publishStatus',
+				options: {
+					fg: black,
+					bgDisabled: lightBlueDisabled,
+					bgEnabled: lightBlue,
+					bgPushing: red,
+				},
 			},
 		],
-	})
+	}
 
-	presets.push({
+	presets.skip_element = {
 		category: 'Commands',
-		label: 'Skip element',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Skip element',
+		options: {},
+		style: {
 			text: 'Skip element',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'playback_skip',
-				options: {
-					strategy: 'snap',
-				},
+				down: [
+					{
+						actionId: 'playback_skip',
+						options: {
+							strategy: 'snap',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'skippableStatus',
+				feedbackId: 'skippableStatus',
+				options: {
+					fg: black,
+					bgDisabled: darkGrey,
+					bgEnabled: lightBlue,
+					bgSkipped: green,
+				},
 			},
 		],
-	})
+	}
 
-	presets.push({
+	presets.trigger_ad = {
 		category: 'Commands',
-		label: 'Trigger ad',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Trigger ad',
+		options: {},
+		style: {
 			text: 'Trigger ad',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'playback_ad',
-				options: {
-					adLength: '30',
-				},
+				down: [
+					{
+						actionId: 'playback_ad',
+						options: {
+							adLength: '30',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'adTriggerStatus',
+				feedbackId: 'adTriggerStatus',
+				options: {
+					fg: black,
+					bgDisabled: darkGrey,
+					bgEnabled: lightBlue,
+					bgPushing: green,
+				},
 			},
 		],
-	})
+	}
 
-
-	if (self.data.apiVersion > 1) {
-		presets.push({
+	if (this.data.apiVersion > 1) {
+		presets.toggle_breaking_news = {
 			category: 'Commands',
-			label: 'Toggle Breaking News',
-			bank: {
-				style: 'text',
+			type: 'button',
+			name: 'Toggle Breaking News',
+			options: {},
+			style: {
 				text: 'Toggle Breaking News',
 				size: pstSize,
 				color: '16777215',
-				bgcolor: self.rgb(91, 198, 233),
+				bgcolor: combineRgb(91, 198, 233),
 			},
-			actions: [
+			steps: [
 				{
-					action: 'breaking_news',
+					down: [
+						{
+							actionId: 'breaking_news',
+							options: {},
+						},
+					],
+					up: [],
 				},
 			],
 			feedbacks: [
 				{
-					type: 'breakingNewsStatus',
+					feedbackId: 'breakingNewsStatus',
 					style: {
-						bgcolor: self.rgb(231, 88, 59),
-					}
+						bgcolor: combineRgb(231, 88, 59),
+					},
+					options: {},
 				},
 			],
-		})
+		}
 	}
 
-	if (self.data.apiVersion > 3) {
-		presets.push({
+	if (this.data.apiVersion > 3) {
+		presets.cancel_ad = {
 			category: 'Commands',
-			label: 'Cancel ad',
-			bank: {
-				style: 'text',
+			type: 'button',
+			name: 'Cancel ad',
+			options: {},
+			style: {
 				text: 'Cancel ad',
 				size: pstSize,
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: [
+			steps: [
 				{
-					action: 'cancel_ad',
+					down: [
+						{
+							actionId: 'cancel_ad',
+							options: {},
+						},
+					],
+					up: [],
 				},
 			],
 			feedbacks: [
 				{
-					type: 'adTriggerStatus',
+					feedbackId: 'adTriggerStatus',
+					options: {
+						fg: black,
+						bgDisabled: darkGrey,
+						bgEnabled: lightBlue,
+						bgPushing: green,
+					},
 				},
 			],
-		})
+		}
 	}
-	
 
-	self.setPresetDefinitions(presets)
+	this.setPresetDefinitions(presets)
 }

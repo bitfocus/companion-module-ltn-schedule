@@ -1,6 +1,6 @@
-const WebSocket = require('ws')
+import WebSocket from 'ws'
 
-exports.initAPI = function () {
+export function initAPI() {
 	if (this.socket) {
 		this.socket.close()
 		delete this.socket
@@ -22,7 +22,7 @@ exports.initAPI = function () {
 				ws.send('keep alive')
 			}
 		} catch (err) {
-			this.debug('Error with handling socket' + JSON.stringify(err))
+			this.log('info', 'Error with handling socket' + JSON.stringify(err))
 		}
 	}
 
@@ -41,8 +41,6 @@ exports.initAPI = function () {
 					password: this.config.password,
 				})
 			)
-
-			this.debug('Listener WebSocket Opened')
 		})
 
 		this.socket.on('message', (msg) => {
@@ -50,32 +48,24 @@ exports.initAPI = function () {
 
 			if (message.apiSocketMessageId === 'api_authenticate') {
 				if (message.success) {
-					this.status(this.STATUS_OK, 'Connected & Authenticated')
-					this.debug('API Auth success')
+					this.updateStatus('ok', 'Connected & Authenticated')
+					this.log('info', 'API Auth success')
 					if (message.apiVersion === '1') {
 						this.data.apiVersion = 1
-					} else if (message.apiVersion === '2')
-					{
+					} else if (message.apiVersion === '2') {
 						this.data.apiVersion = 2
 						this.updateElements()
-					}
-					else if(message.apiVersion === '3')
-					{
+					} else if (message.apiVersion === '3') {
 						this.data.apiVersion = 3
-					}
-					else if(message.apiVersion === '4')
-					{
+					} else if (message.apiVersion === '4') {
 						this.data.apiVersion = 4
-					}
-					else if(typeof message.apiVersion !== 'undefined' ) {
+					} else if (typeof message.apiVersion !== 'undefined') {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
-					}
-					else {
+					} else {
 						this.data.apiVersion = 0
 					}
 				} else {
-					this.status(this.STATUS_ERROR, 'Authentication failed')
-					this.log('Schedule API auth error')
+					this.updateStatus('bad_config', 'Authentication failed')
 				}
 			} else if (
 				(message.messageId === 'pushTargetUpdate' || message._messageId === 'pushTargetUpdate') &&
@@ -101,8 +91,7 @@ exports.initAPI = function () {
 					this.data.playoutRunning = message.playoutRunning
 				}
 				this.data.publishRunning = message.publishRunning
-				if (this.data.apiVersion > 1)
-				{
+				if (this.data.apiVersion > 1) {
 					this.data.breakingNewsRunning = message.breakingNewsRunning
 				}
 				if (message.playoutItemIndex != -1) {
@@ -117,10 +106,9 @@ exports.initAPI = function () {
 				this.checkFeedbacks('skippableStatus')
 				this.checkFeedbacks('adTriggerStatus')
 				this.checkFeedbacks('targetsStatus')
-				if(this.data.apiVersion > 1) {
+				if (this.data.apiVersion > 1) {
 					this.checkFeedbacks('breakingNewsStatus')
 				}
-
 			} else if (message.messageId === 'ad_triggered' || message._messageId === 'ad_triggered') {
 				this.data.adRunning = message.adLength
 				if (this.adTimeout) {
@@ -145,12 +133,12 @@ exports.initAPI = function () {
 		})
 
 		this.socket.on('onclose', () => {
-			this.debug('Server might have restarted')
+			this.log('info', 'Server might have restarted')
 		})
 
 		this.socket.on('onerror', (err) => {
-			this.status(this.STATUS_ERROR, err)
-			this.debug('Schedule Websocket API err:' + JSON.stringify(err))
+			this.updateStatusstatus('unknown_error', err)
+			this.log('info', 'Schedule Websocket API err:' + JSON.stringify(err))
 		})
 	}
 

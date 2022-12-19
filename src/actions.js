@@ -1,11 +1,11 @@
-const got = require('got')
+import got from 'got'
 
-exports.getActions = function () {
+export function getActions() {
 	var self = this
 	var skipOption = {}
 	if (self.data.apiVersion > 0) {
 		skipOption = {
-			type: 'dropdown',
+			type: 'multidropdown',
 			multiple: false,
 			minSelection: 1,
 			label: 'Skip strategy',
@@ -18,9 +18,10 @@ exports.getActions = function () {
 			],
 		}
 	}
+
 	var actions = {
 		playback_toggle: {
-			label: 'Toggle playback running',
+			name: 'Toggle playback running',
 			options: [
 				{
 					type: 'number',
@@ -32,15 +33,49 @@ exports.getActions = function () {
 					range: false,
 				},
 			],
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				var apiEndpoint
+
+				if (this.data.playoutRunning) {
+					apiEndpoint = 'playout/stop'
+					cmd = ''
+				} else {
+					apiEndpoint = 'playout/start'
+					if (opt.startstamp != '' && opt.startstamp != 0) {
+						cmd = '?timestamp=' + opt.startstamp
+					} else {
+						cmd = '?timestamp=NOW'
+					}
+				}
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
 		},
 		publish_toggle: {
-			label: 'Toggle publishing',
+			name: 'Toggle publishing',
+			options: [],
+			callback: async (event) => {
+				var cmd
+				var apiEndpoint
+
+				if (this.data.playoutRunning) {
+					if (this.data.publishRunning) {
+						apiEndpoint = 'playout/unpublish'
+						cmd = ''
+					} else {
+						apiEndpoint = 'playout/publish'
+						cmd = ''
+					}
+				}
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
 		},
 		targets_toggle: {
-			label: 'Toggle push targets',
+			name: 'Toggle push targets',
 			options: [
 				{
-					type: 'dropdown',
+					type: 'multidropdown',
 					multiple: true,
 					minSelection: 1,
 					label: 'Push Targets',
@@ -50,13 +85,55 @@ exports.getActions = function () {
 					choices: self.data.targets.concat({ id: 'select', label: 'Select a target' }),
 				},
 			],
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				var apiEndpoint
+
+				var actualSelectedTargets = opt.targetsSelect.filter((target) => target !== 'select')
+				var someDisabled = this.data.targets
+					.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
+					.some((target) => !target.enabled)
+
+				if (actualSelectedTargets.length > 0) {
+					if (someDisabled) {
+						apiEndpoint = 'targets/start'
+					} else {
+						apiEndpoint = 'targets/stop'
+					}
+					cmd = '?id=' + actualSelectedTargets.join('&id=')
+				}
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
 		},
 		playback_skip: {
-			label: 'Skip a playback element',
+			name: 'Skip a playback element',
 			options: [skipOption],
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				var apiEndpoint
+
+				if (!this.data.skipUsed) {
+					apiEndpoint = 'playout/skip'
+					if (this.data.apiVersion > 0) {
+						cmd = '?strategy=' + opt.strategy
+					} else {
+						cmd = ''
+					}
+
+					this.data.skipUsed = true
+					setTimeout(() => {
+						this.data.skipUsed = false
+						this.checkFeedbacks('skippableStatus')
+					}, 2000)
+					this.checkFeedbacks('skippableStatus')
+				}
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
 		},
 		playback_ad: {
-			label: 'Trigger an ad',
+			name: 'Trigger an ad',
 			options: [
 				{
 					type: 'number',
@@ -70,20 +147,49 @@ exports.getActions = function () {
 					range: false,
 				},
 			],
-		}
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				var apiEndpoint
+
+				if (
+					this.data.adRunning == 0 &&
+					this.data.playoutRunning &&
+					(this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)
+				) {
+					apiEndpoint = 'playout/ad'
+					cmd = '?adLength=' + opt.adLength
+				}
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
+		},
 	}
 
 	if (self.data.apiVersion == 2) {
 		actions.breaking_news = {
-			label: 'Toggle breaking live',
+			name: 'Toggle breaking live',
+			options: [],
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				var apiEndpoint
+
+				if (!this.data.breakingNewsRunning) {
+					apiEndpoint = 'breakinglive/start'
+					cmd = ''
+				} else {
+					apiEndpoint = 'breakinglive/stop'
+					cmd = ''
+				}
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
 		}
-	}
-	else if (self.data.apiVersion > 2) {
+	} else if (self.data.apiVersion > 2) {
 		actions.breaking_news = {
-			label: 'Toggle breaking live',
+			name: 'Toggle breaking live',
 			options: [
 				{
-					type: 'dropdown',
+					type: 'multidropdown',
 					multiple: false,
 					minSelection: 0,
 					label: 'Live streams',
@@ -93,106 +199,47 @@ exports.getActions = function () {
 					choices: self.data.livestreams.concat({ id: 'select', label: 'Select a target' }),
 				},
 			],
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				var apiEndpoint
+
+				if (!this.data.breakingNewsRunning) {
+					apiEndpoint = 'breakinglive/start'
+					cmd = ''
+				} else {
+					apiEndpoint = 'breakinglive/stop'
+					cmd = ''
+				}
+				if (this.data.apiVersion > 2 && opt.livestreamSelect !== 'select') {
+					cmd = '?breakingliveId=' + opt.livestreamSelect
+				}
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
 		}
 	}
-	
+
 	if (self.data.apiVersion > 3) {
 		actions.cancel_ad = {
-			label: 'Cancel an ad',
+			name: 'Cancel an ad',
+			options: [],
+			callback: async (event) => {
+				var cmd
+				var apiEndpoint
+
+				apiEndpoint = 'playout/cancelad'
+				cmd = ''
+
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
 		}
 	}
 
 	return actions
 }
 
-exports.executeAction = function (action) {
-	var opt = action.options
-	var cmd
-	var apiEndpoint
-
-	switch (action.action) {
-		case 'playback_toggle':
-			if (this.data.playoutRunning) {
-				apiEndpoint = 'playout/stop'
-				cmd = ''
-			} else {
-				apiEndpoint = 'playout/start'
-				if (opt.startstamp != "" && opt.startstamp != 0) {
-					cmd = '?timestamp=' + opt.startstamp
-				} else {
-					cmd = '?timestamp=NOW'
-				}
-			}
-			break
-		case 'publish_toggle':
-			if (this.data.playoutRunning) {
-				if (this.data.publishRunning) {
-					apiEndpoint = 'playout/unpublish'
-					cmd = ''
-				} else {
-					apiEndpoint = 'playout/publish'
-					cmd = ''
-				}
-			}
-			break
-		case 'breaking_news':
-			if (!this.data.breakingNewsRunning) {
-					apiEndpoint = 'breakinglive/start'
-					cmd = ''
-			}
-			else {
-					apiEndpoint = 'breakinglive/stop'
-					cmd = ''
-			}
-			if (this.data.apiVersion > 2 && opt.livestreamSelect !== 'select') {
-				cmd = '?breakingliveId=' + opt.livestreamSelect
-			}
-			break
-		case 'targets_toggle':
-			var actualSelectedTargets = opt.targetsSelect.filter((target) => target !== 'select')
-			var someDisabled = this.data.targets
-				.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
-				.some((target) => !target.enabled)
-
-			if (actualSelectedTargets.length > 0) {
-				if (someDisabled) {
-					apiEndpoint = 'targets/start'
-				} else {
-					apiEndpoint = 'targets/stop'
-				}
-				cmd = '?id=' + actualSelectedTargets.join('&id=')
-			}
-			break
-		case 'playback_skip':
-			if (!this.data.skipUsed) {
-				apiEndpoint = 'playout/skip'
-				if(this.data.apiVersion > 0){
-					cmd = '?strategy=' + opt.strategy
-				} else {
-					cmd = ''
-				}
-				
-				this.data.skipUsed = true
-				setTimeout(() => {
-					this.data.skipUsed = false
-					this.checkFeedbacks('skippableStatus')
-				}, 2000)
-				this.checkFeedbacks('skippableStatus')
-			}
-			break
-		case 'playback_ad':
-			if (this.data.adRunning == 0 && this.data.playoutRunning && (this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)) {
-				apiEndpoint = 'playout/ad'
-				cmd = '?adLength=' + opt.adLength
-			}
-			break
-		case `cancel_ad`:
-			if (this.data.apiVersion > 3) {
-				apiEndpoint = 'playout/cancelad'
-				cmd = ''
-			}
-	}
-
+function sendAction(apiEndpoint, cmd) {
+	this.log('info', 'action! ' + this.config + '    ' + this)
 	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
 		var requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
@@ -200,12 +247,12 @@ exports.executeAction = function (action) {
 			.get(requestString)
 			.then((res) => {
 				if (res.statusCode === 200) {
-					this.debug('API Call success')
+					this.log('info', 'API Call success')
 				}
 			})
 			.catch((err) => {
-				this.status(this.STATUS_ERROR, err)
-				this.debug('Schedule API err:' + JSON.stringify(err))
+				this.updateStatus('connection_failure', err)
+				this.log('info', 'Schedule API err:' + JSON.stringify(err))
 			})
 	}
 }
