@@ -54,16 +54,18 @@ export function initAPI() {
 						this.data.apiVersion = 1
 					} else if (message.apiVersion === '2') {
 						this.data.apiVersion = 2
-						this.updateElements()
 					} else if (message.apiVersion === '3') {
 						this.data.apiVersion = 3
 					} else if (message.apiVersion === '4') {
 						this.data.apiVersion = 4
+					} else if (message.apiVersion === '5') {
+						this.data.apiVersion = 5
 					} else if (typeof message.apiVersion !== 'undefined') {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
 					} else {
 						this.data.apiVersion = 0
 					}
+					this.updateElements()
 				} else {
 					this.updateStatus('bad_config', 'Authentication failed')
 				}
@@ -84,6 +86,12 @@ export function initAPI() {
 				this.init_feedbacks()
 				this.updatePresets()
 				this.checkFeedbacks('targetsStatus')
+			} else if (message.messageId === 'get_playout_settings') {
+				if (this.data.apiVersion >= 5) {
+					this.data.overlayEnabled = message.playoutSettings.overlayEnabled
+					this.data.htmlOverlayEnabled = message.playoutSettings.html5OverlayEnabled
+				}
+				this.checkFeedbacks('overlayStatus', 'htmlOverlayStatus')
 			} else if (message.messageId === 'playout_update' || message._messageId === 'playout_update') {
 				if (this.data.apiVersion > 0) {
 					this.data.playoutRunning = message.activated
@@ -100,14 +108,18 @@ export function initAPI() {
 					} else {
 						this.data.currentItemType = message.playoutList[message.playoutItemIndex].type
 					}
+					if (this.data.apiVersion >= 5) {
+						this.data.currentItemHeld = message.currentItemHeld
+						this.data.hold = message.hold
+					}
 				}
-				this.checkFeedbacks('playbackStatus')
-				this.checkFeedbacks('publishStatus')
-				this.checkFeedbacks('skippableStatus')
-				this.checkFeedbacks('adTriggerStatus')
-				this.checkFeedbacks('targetsStatus')
+				this.checkFeedbacks('playbackStatus', 'publishStatus', 'skippableStatus', 'adTriggerStatus', 'targetsStatus')
+
 				if (this.data.apiVersion > 1) {
 					this.checkFeedbacks('breakingNewsStatus')
+				}
+				if (this.data.apiVersion >= 5) {
+					this.checkFeedbacks('holdStatus')
 				}
 			} else if (message.messageId === 'ad_triggered' || message._messageId === 'ad_triggered') {
 				this.data.adRunning = message.adLength

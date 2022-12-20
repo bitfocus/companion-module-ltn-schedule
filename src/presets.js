@@ -204,14 +204,16 @@ export function initPresets() {
 				text: 'Toggle Breaking News',
 				size: pstSize,
 				color: '16777215',
-				bgcolor: combineRgb(91, 198, 233),
+				bgcolor: darkGrey,
 			},
 			steps: [
 				{
 					down: [
 						{
 							actionId: 'breaking_news',
-							options: {},
+							options: {
+								livestreamSelect: 'select'
+							},
 						},
 					],
 					up: [],
@@ -219,9 +221,16 @@ export function initPresets() {
 			],
 			feedbacks: [
 				{
+					feedbackId: 'playbackStatus',
+					style: {
+						bgcolor: lightBlue,
+					},
+					options: {},
+				},
+				{
 					feedbackId: 'breakingNewsStatus',
 					style: {
-						bgcolor: combineRgb(231, 88, 59),
+						bgcolor: red,
 					},
 					options: {},
 				},
@@ -260,6 +269,110 @@ export function initPresets() {
 						bgDisabled: darkGrey,
 						bgEnabled: lightBlue,
 						bgPushing: green,
+					},
+				},
+			],
+		}
+	}
+
+	if (this.data.apiVersion >= 5) {
+		presets.toggle_overlay = {
+			category: 'Commands',
+			type: 'button',
+			name: 'Toggle PNG Overlay',
+			options: {},
+			style: {
+				text: 'Toggle PNG Overlay',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: lightBlueDisabled,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'toggle_overlay',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'overlayStatus',
+					style: {
+						bgcolor: lightBlue,
+					},
+					options: {},
+				},
+			],
+		}
+
+		presets.toggle_html_overlay = {
+			category: 'Commands',
+			type: 'button',
+			name: 'Toggle HTML Overlay',
+			options: {},
+			style: {
+				text: 'Toggle HTML Overlay',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: lightBlueDisabled,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'toggle_html_overlay',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'htmlOverlayStatus',
+					style: {
+						bgcolor: lightBlue,
+					},
+					options: {},
+				},
+			],
+		}
+
+		presets.toggle_hold = {
+			category: 'Commands',
+			type: 'button',
+			name: 'Toggle hold property',
+			options: {},
+			style: {
+				text: 'Toggle hold',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'toggle_hold',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'holdStatus',
+					options: {
+						fg: black,
+						bgDisabled: darkGrey,
+						bgRunningEnabled: lightBlue,
+						bgRunningDisabled: lightBlueDisabled,
+						bgHolding: green,
 					},
 				},
 			],

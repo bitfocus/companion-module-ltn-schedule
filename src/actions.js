@@ -1,13 +1,11 @@
 import got from 'got'
 
 export function getActions() {
-	var self = this
 	var skipOption = {}
-	if (self.data.apiVersion > 0) {
+	if (this.data.apiVersion > 0) {
 		skipOption = {
-			type: 'multidropdown',
+			type: 'dropdown',
 			multiple: false,
-			minSelection: 1,
 			label: 'Skip strategy',
 			id: 'strategy',
 			tooltip: 'What do you want the skipping behavior to be?',
@@ -17,6 +15,26 @@ export function getActions() {
 				{ id: 'fix_next', label: 'Skip to the next asset, and creates a gap after it' },
 			],
 		}
+	}
+
+	var breakingNewsOptions = []
+	if (this.data.apiVersion > 2) {
+		breakingNewsOptions.push({
+			type: 'dropdown',
+			label: 'Live streams',
+			id: 'livestreamSelect',
+			tooltip: 'What livestream do you want to use?',
+			default: 'select',
+			choices: this.data.livestreams.concat({ id: 'select', label: 'Select a target' }),
+		})
+	}
+	if (this.data.apiVersion >= 5) {
+		breakingNewsOptions.push({
+			id: 'skipOnStop',
+			type: 'checkbox',
+			label: 'Skip when stopping breaking news',
+			default: false,
+		})
 	}
 
 	var actions = {
@@ -82,7 +100,7 @@ export function getActions() {
 					id: 'targetsSelect',
 					tooltip: 'What push targets do you want to toggle?',
 					default: 'select',
-					choices: self.data.targets.concat({ id: 'select', label: 'Select a target' }),
+					choices: this.data.targets.concat({ id: 'select', label: 'Select a target' }),
 				},
 			],
 			callback: async (event) => {
@@ -165,7 +183,7 @@ export function getActions() {
 		},
 	}
 
-	if (self.data.apiVersion == 2) {
+	if (this.data.apiVersion == 2) {
 		actions.breaking_news = {
 			name: 'Toggle breaking live',
 			options: [],
@@ -184,21 +202,10 @@ export function getActions() {
 				sendAction.bind(this)(apiEndpoint, cmd)
 			},
 		}
-	} else if (self.data.apiVersion > 2) {
+	} else if (this.data.apiVersion > 2) {
 		actions.breaking_news = {
 			name: 'Toggle breaking live',
-			options: [
-				{
-					type: 'multidropdown',
-					multiple: false,
-					minSelection: 0,
-					label: 'Live streams',
-					id: 'livestreamSelect',
-					tooltip: 'What livestream do you want to use?',
-					default: 'select',
-					choices: self.data.livestreams.concat({ id: 'select', label: 'Select a target' }),
-				},
-			],
+			options: breakingNewsOptions,
 			callback: async (event) => {
 				var opt = event.options
 				var cmd
@@ -207,19 +214,23 @@ export function getActions() {
 				if (!this.data.breakingNewsRunning) {
 					apiEndpoint = 'breakinglive/start'
 					cmd = ''
+					if (this.data.apiVersion > 2 && opt.livestreamSelect !== 'select') {
+						cmd = '?breakingliveId=' + opt.livestreamSelect
+					}
 				} else {
 					apiEndpoint = 'breakinglive/stop'
 					cmd = ''
+					if (this.data.apiVersion >= 5) {
+						cmd = '?skip=' + opt.skipOnStop
+					}
 				}
-				if (this.data.apiVersion > 2 && opt.livestreamSelect !== 'select') {
-					cmd = '?breakingliveId=' + opt.livestreamSelect
-				}
+
 				sendAction.bind(this)(apiEndpoint, cmd)
 			},
 		}
 	}
 
-	if (self.data.apiVersion > 3) {
+	if (this.data.apiVersion > 3) {
 		actions.cancel_ad = {
 			name: 'Cancel an ad',
 			options: [],
@@ -235,19 +246,83 @@ export function getActions() {
 		}
 	}
 
+	if (this.data.apiVersion >= 5) {
+		actions.toggle_overlay = {
+			name: 'Toggle overlay',
+			options: [],
+			callback: async (event) => {
+				var cmd
+				var apiEndpoint
+
+				if (!this.data.overlayEnabled) {
+					apiEndpoint = 'overlay/static/activate'
+					cmd = ''
+				} else {
+					apiEndpoint = 'overlay/static/deactivate'
+					cmd = ''
+				}
+
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
+		}
+
+		actions.toggle_html_overlay = {
+			name: 'Toggle HTML overlay',
+			options: [
+				{
+					id: 'overlayUrl',
+					type: 'textinput',
+					label: 'Url of the overlay',
+					requred: false,
+					default: '',
+				},
+			],
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				var apiEndpoint
+
+				if (!this.data.htmlOverlayEnabled) {
+					apiEndpoint = 'overlay/html/activate'
+					cmd = ''
+				} else {
+					apiEndpoint = 'overlay/html/deactivate'
+					cmd = ''
+				}
+
+				if (typeof opt.overlayUrl !== 'undefined' && opt.overlayUrl !== '') {
+					cmd = '?url=' + opt.overlayUrl
+				}
+
+				sendAction.bind(this)(apiEndpoint, cmd)
+			},
+		}
+
+		actions.toggle_hold = {
+			name: 'Toggle hold property',
+			description: 'Toggle hold property of the currently running element',
+			options: [],
+			callback: async (event) => {
+				sendAction.bind(this)('playout/hold', '', (result) => {
+					this.data.currentItemHeld = result.currentIsHeld
+				})
+			},
+		}
+	}
+
 	return actions
 }
 
-function sendAction(apiEndpoint, cmd) {
-	this.log('info', 'action! ' + this.config + '    ' + this)
+function sendAction(apiEndpoint, cmd, callback) {
+	
 	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
 		var requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
 		got
 			.get(requestString)
 			.then((res) => {
-				if (res.statusCode === 200) {
-					this.log('info', 'API Call success')
+				if (res.statusCode === 200 && callback != null) {
+					callback.bind(this)(JSON.parse(res.body))
 				}
 			})
 			.catch((err) => {

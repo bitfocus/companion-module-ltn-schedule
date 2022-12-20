@@ -223,5 +223,78 @@ export function initFeedbacks() {
 			}
 		},
 	}
+
+	if (this.data.apiVersion >= 5) {
+		feedbacks.overlayStatus = {
+			type: 'boolean',
+			name: 'PNG Overlay enabled status',
+			description: 'Indicates if the png overlay is set and enabled',
+			defaultStyle: {
+				bgcolor: lightBlue,
+			},
+			options: [],
+			callback: ({ options }) => {
+				return this.data.overlayEnabled
+			},
+		}
+
+		feedbacks.htmlOverlayStatus = {
+			type: 'boolean',
+			name: 'HTML Overlay enabled status',
+			description: 'Indicates if the HTML overlay is set and enabled',
+			defaultStyle: {
+				bgcolor: lightBlue,
+			},
+			options: [],
+			callback: ({ options }) => {
+				return this.data.htmlOverlayEnabled
+			},
+		}
+
+		feedbacks.holdStatus = {
+			type: 'advanced',
+			name: 'Current element hold status',
+			description: 'Indicates if the running element has the hold status enabled',
+			options: [
+				foregroundColor,
+				{
+					type: 'colorpicker',
+					label: 'Playback not running',
+					id: 'bgDisabled',
+					default: darkGrey,
+				},
+				{
+					type: 'colorpicker',
+					label: 'Playback running, item hold deactivated',
+					id: 'bgRunningDisabled',
+					default: lightBlueDisabled,
+				},
+				{
+					type: 'colorpicker',
+					label: 'Playback running, item hold activated',
+					id: 'bgRunningEnabled',
+					default: lightBlue,
+				},
+				{
+					type: 'colorpicker',
+					label: 'Item actively held',
+					id: 'bgHolding',
+					default: green,
+				},
+			],
+			callback: ({ options }) => {
+				if (this.data.hold) {
+					return { color: options.fg, bgcolor: options.bgHolding }
+				} else if (this.data.currentItemHeld != null && this.data.currentItemHeld && this.data.playoutRunning) {
+					return { color: options.fg, bgcolor: options.bgRunningEnabled }
+				} else if (this.data.currentItemHeld != null && this.data.playoutRunning) {
+					return { color: options.fg, bgcolor: options.bgRunningDisabled }
+				} else {
+					return { color: options.fg, bgcolor: options.bgDisabled }
+				}
+			},
+		}
+	}
+
 	return feedbacks
 }

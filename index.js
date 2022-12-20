@@ -8,7 +8,7 @@ import { updateVariableDefinitions } from './src/variables.js'
 import { initPresets } from './src/presets.js'
 
 export const lightBlue = combineRgb(91, 198, 233)
-export const lightBlueDisabled = combineRgb(63, 184, 223)
+export const lightBlueDisabled = combineRgb(32, 92, 111)
 export const darkGrey = combineRgb(27, 27, 27)
 export const lightGrey = combineRgb(117, 117, 117)
 export const green = combineRgb(93, 224, 130)
@@ -47,6 +47,10 @@ class LTNScheduleInstance extends InstanceBase {
 					title: 'fill',
 				},
 			],
+			htmlOverlayEnabled: false,
+			overlayEnabled: false,
+			currentItemHeld: null,
+			hold: false,
 		}
 
 	
