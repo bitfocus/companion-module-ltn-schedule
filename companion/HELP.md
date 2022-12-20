@@ -19,9 +19,13 @@ Action | Description
 **Toggle playback running** | Starts/stops the playback without publishing (timestamp can be set like in the Schedule UI).
 **Toggle publishing** | Starts/stops publishing if the playback is running.
 **Toggle push targets** | Enables/disables push targets.
-**Skip a playback element** | Jump to next item when the playback is running.
+**Skip a playback element** | Jump to next item when the playback is running, with a selectable strategy
 **Trigger an ad** | Triggers an ad of the desired length when system is pushing.
-
+**Cancel an ad** | Cancels a running ad break.
+**Toggle breaking live** | Starts/stop a breaking live, with a selectable livestream.
+**Toggle PNG Overlay** | Toggle the activation of the PNG overlay.
+**Toggle HTML5 Overlay** | Toggle the activation of the HTML5 overlay.
+**Toggle hold** | Toggles the hold parameter of the current running element.
 
 ## Feedback available
 Feedback | Description
@@ -31,6 +35,10 @@ Feedback | Description
 **Targets publish status** | Shows if the selected push targets are disabled/enabled/pushing/error.
 **Skippable status** | Shows if the skip action is possible, or on cooldown.
 **Ad trigger status** | Shows if an ad can be triggered or if one is currently running.
+**Breaking live status** | Shows if breaking live can be enabled, and if it is active
+**PNG Overlay status** | Shows if the overlay is active or not.
+**HTML5 Overlay status** | Shows if the overlay is active or not.
+**Hold status** | Shows if the current element has the hold property enabled or not, or if it is currently being held.
 
 ## Presets
 
