@@ -212,7 +212,7 @@ export function initPresets() {
 						{
 							actionId: 'breaking_news',
 							options: {
-								livestreamSelect: 'select'
+								livestreamSelect: 'select',
 							},
 						},
 					],
@@ -377,6 +377,56 @@ export function initPresets() {
 				},
 			],
 		}
+
+		this.data.livestreams
+			.map((live) => {
+				return {
+					category: 'Breaking Live',
+					type: 'button',
+					name: `BL ${live.label}`,
+					options: {},
+					style: {
+						text: `BL ${live.label}`,
+						size: pstSize,
+						color: '16777215',
+						bgcolor: darkGrey,
+					},
+					steps: [
+						{
+							down: [
+								{
+									actionId: 'breaking_news',
+									options: {
+										livestreamSelect: live.id,
+									},
+								},
+							],
+							up: [],
+						},
+					],
+					feedbacks: [
+						{
+							feedbackId: 'playbackStatus',
+							style: {
+								bgcolor: lightBlue,
+							},
+							options: {},
+						},
+						{
+							feedbackId: 'breakingLiveLivestreamStatus',
+							style: {
+								bgcolor: red,
+							},
+							options: {
+								livestreamSelect: live.id,
+							},
+						},
+					],
+				}
+			})
+			.forEach((element) => {
+				presets[element.name] = element
+			})
 	}
 
 	this.setPresetDefinitions(presets)

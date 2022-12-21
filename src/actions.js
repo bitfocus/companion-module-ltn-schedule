@@ -211,16 +211,17 @@ export function getActions() {
 				var cmd
 				var apiEndpoint
 
-				if (!this.data.breakingNewsRunning) {
+				if (!this.data.breakingNewsRunning
+					|| (this.data.apiVersion >= 5 &&  opt.livestreamSelect !== 'select' && this.data.breakingNewsCurrentId !== opt.livestreamSelect)) {
 					apiEndpoint = 'breakinglive/start'
 					cmd = ''
-					if (this.data.apiVersion > 2 && opt.livestreamSelect !== 'select') {
+					if (opt.livestreamSelect !== 'select') {
 						cmd = '?breakingliveId=' + opt.livestreamSelect
 					}
 				} else {
 					apiEndpoint = 'breakinglive/stop'
 					cmd = ''
-					if (this.data.apiVersion >= 5) {
+					if (this.data.apiVersion >= 5 && typeof opt.skipOnStop !== 'undefined') {
 						cmd = '?skip=' + opt.skipOnStop
 					}
 				}
@@ -318,6 +319,7 @@ function sendAction(apiEndpoint, cmd, callback) {
 	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
 		var requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
+		this.log('info', `request ${requestString}`)
 		got
 			.get(requestString)
 			.then((res) => {

@@ -294,6 +294,31 @@ export function initFeedbacks() {
 				}
 			},
 		}
+
+		this.log('info', `livestreams ${this.data.livestreams}`)
+		const livestreams = {
+			type: 'dropdown',
+			label: 'Live streams',
+			id: 'livestreamSelect',
+			tooltip: 'What livestream do you want to track?',
+			default: 'select',
+			choices: this.data.livestreams.concat({ id: 'select', label: 'Select a livestream' }),
+		}
+
+		feedbacks.breakingLiveLivestreamStatus = {
+			type: 'boolean',
+			name: 'Breaking news activation status',
+			description: 'Indicates if the livestream is run as breaking news',
+			defaultStyle: {
+				bgcolor: red,
+			},
+			options: [livestreams],
+			callback: ({ options }) => {
+				if (this.data.breakingNewsRunning && this.data.breakingNewsCurrentId === options.livestreamSelect) {
+					return true
+				}
+			},
+		}
 	}
 
 	return feedbacks
