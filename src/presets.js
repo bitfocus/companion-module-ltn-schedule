@@ -213,6 +213,7 @@ export function initPresets() {
 							actionId: 'breaking_news',
 							options: {
 								livestreamSelect: 'select',
+								skipOnStop: false,
 							},
 						},
 					],
