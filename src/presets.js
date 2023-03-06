@@ -1,193 +1,433 @@
-exports.initPresets = function () {
-	const presets = []
+import { combineRgb } from '@companion-module/base'
+import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black } from '../index.js'
+
+export function initPresets() {
+	const presets = {}
 	const pstSize = '18'
-	const self = this
-	self.data.targets
+	this.data.targets
 		.map((target) => {
 			return {
+				id: target.id,
+				type: 'button',
 				category: 'Push Targets',
-				label: target.label,
-				bank: {
-					style: 'text',
+				name: target.label,
+				options: {},
+				style: {
 					text: target.label,
 					size: pstSize,
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0),
+					bgcolor: combineRgb(0, 0, 0),
 				},
-				actions: [
+				steps: [
 					{
-						action: 'targets_toggle',
-						options: {
-							targetsSelect: [target.id],
-						},
+						down: [
+							{
+								actionId: 'targets_toggle',
+								options: {
+									targetsSelect: [target.id],
+								},
+							},
+						],
+						up: [],
 					},
 				],
 				feedbacks: [
 					{
-						type: 'targetsStatus',
+						feedbackId: 'targetsStatus',
 						options: {
 							targets: [target.id],
+							fg: black,
+							bgDisabled: darkGrey,
+							bgEnabled: lightGrey,
+							bgPushing: green,
+							bgPushingProblem: red,
 						},
 					},
 				],
 			}
 		})
 		.forEach((element) => {
-			presets.push(element)
+			presets[element.id] = element
 		})
 
-	presets.push({
+	presets.toggle_playback = {
 		category: 'Commands',
-		label: 'Toggle Playback',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Toggle Playback',
+		options: {},
+		style: {
 			text: 'Toggle playback',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(91, 198, 233),
+			bgcolor: combineRgb(91, 198, 233),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'playback_toggle',
-				options: {
-					startstamp: 0,
-				},
+				down: [
+					{
+						actionId: 'playback_toggle',
+						options: {
+							startstamp: 0,
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'playbackStatus',
+				feedbackId: 'playbackStatus',
 				style: {
-					bgcolor: self.rgb(231, 88, 59),
-				}
+					bgcolor: combineRgb(231, 88, 59),
+				},
+				options: {},
 			},
 		],
-	})
+	}
 
-	presets.push({
+	presets.toggle_publish = {
 		category: 'Commands',
-		label: 'Toggle Publish',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Toggle Publish',
+		options: {},
+		style: {
 			text: 'Toggle publish',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'publish_toggle',
+				down: [
+					{
+						actionId: 'publish_toggle',
+						options: {},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'publishStatus',
+				feedbackId: 'publishStatus',
+				options: {
+					fg: black,
+					bgDisabled: lightBlueDisabled,
+					bgEnabled: lightBlue,
+					bgPushing: red,
+				},
 			},
 		],
-	})
+	}
 
-	presets.push({
+	presets.skip_element = {
 		category: 'Commands',
-		label: 'Skip element',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Skip element',
+		options: {},
+		style: {
 			text: 'Skip element',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'playback_skip',
-				options: {
-					strategy: 'snap',
-				},
+				down: [
+					{
+						actionId: 'playback_skip',
+						options: {
+							strategy: 'snap',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'skippableStatus',
+				feedbackId: 'skippableStatus',
+				options: {
+					fg: black,
+					bgDisabled: darkGrey,
+					bgEnabled: lightBlue,
+					bgSkipped: green,
+				},
 			},
 		],
-	})
+	}
 
-	presets.push({
+	presets.trigger_ad = {
 		category: 'Commands',
-		label: 'Trigger ad',
-		bank: {
-			style: 'text',
+		type: 'button',
+		name: 'Trigger ad',
+		options: {},
+		style: {
 			text: 'Trigger ad',
 			size: pstSize,
 			color: '16777215',
-			bgcolor: self.rgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 0),
 		},
-		actions: [
+		steps: [
 			{
-				action: 'playback_ad',
-				options: {
-					adLength: '30',
-				},
+				down: [
+					{
+						actionId: 'playback_ad',
+						options: {
+							adLength: '30',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'adTriggerStatus',
+				feedbackId: 'adTriggerStatus',
+				options: {
+					fg: black,
+					bgDisabled: darkGrey,
+					bgEnabled: lightBlue,
+					bgPushing: green,
+				},
 			},
 		],
-	})
+	}
 
-
-	if (self.data.apiVersion > 1) {
-		presets.push({
+	if (this.data.apiVersion > 1) {
+		presets.toggle_breaking_news = {
 			category: 'Commands',
-			label: 'Toggle Breaking News',
-			bank: {
-				style: 'text',
+			type: 'button',
+			name: 'Toggle Breaking News',
+			options: {},
+			style: {
 				text: 'Toggle Breaking News',
 				size: pstSize,
 				color: '16777215',
-				bgcolor: self.rgb(91, 198, 233),
+				bgcolor: darkGrey,
 			},
-			actions: [
+			steps: [
 				{
-					action: 'breaking_news',
+					down: [
+						{
+							actionId: 'breaking_news',
+							options: {
+								livestreamSelect: 'select',
+							},
+						},
+					],
+					up: [],
 				},
 			],
 			feedbacks: [
 				{
-					type: 'breakingNewsStatus',
+					feedbackId: 'playbackStatus',
 					style: {
-						bgcolor: self.rgb(231, 88, 59),
-					}
+						bgcolor: lightBlue,
+					},
+					options: {},
+				},
+				{
+					feedbackId: 'breakingNewsStatus',
+					style: {
+						bgcolor: red,
+					},
+					options: {},
 				},
 			],
-		})
+		}
 	}
 
-	if (self.data.apiVersion > 3) {
-		presets.push({
+	if (this.data.apiVersion > 3) {
+		presets.cancel_ad = {
 			category: 'Commands',
-			label: 'Cancel ad',
-			bank: {
-				style: 'text',
+			type: 'button',
+			name: 'Cancel ad',
+			options: {},
+			style: {
 				text: 'Cancel ad',
 				size: pstSize,
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: combineRgb(0, 0, 0),
 			},
-			actions: [
+			steps: [
 				{
-					action: 'cancel_ad',
+					down: [
+						{
+							actionId: 'cancel_ad',
+							options: {},
+						},
+					],
+					up: [],
 				},
 			],
 			feedbacks: [
 				{
-					type: 'adTriggerStatus',
+					feedbackId: 'adTriggerStatus',
+					options: {
+						fg: black,
+						bgDisabled: darkGrey,
+						bgEnabled: lightBlue,
+						bgPushing: green,
+					},
 				},
 			],
-		})
+		}
 	}
-	
 
-	self.setPresetDefinitions(presets)
+	if (this.data.apiVersion >= 5) {
+		presets.toggle_overlay = {
+			category: 'Commands',
+			type: 'button',
+			name: 'Toggle PNG Overlay',
+			options: {},
+			style: {
+				text: 'Toggle PNG Overlay',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: lightBlueDisabled,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'toggle_overlay',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'overlayStatus',
+					style: {
+						bgcolor: lightBlue,
+					},
+					options: {},
+				},
+			],
+		}
+
+		presets.toggle_html_overlay = {
+			category: 'Commands',
+			type: 'button',
+			name: 'Toggle HTML Overlay',
+			options: {},
+			style: {
+				text: 'Toggle HTML Overlay',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: lightBlueDisabled,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'toggle_html_overlay',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'htmlOverlayStatus',
+					style: {
+						bgcolor: lightBlue,
+					},
+					options: {},
+				},
+			],
+		}
+
+		presets.toggle_hold = {
+			category: 'Commands',
+			type: 'button',
+			name: 'Toggle hold property',
+			options: {},
+			style: {
+				text: 'Toggle hold',
+				size: pstSize,
+				color: '16777215',
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'toggle_hold',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'holdStatus',
+					options: {
+						fg: black,
+						bgDisabled: darkGrey,
+						bgRunningEnabled: lightBlue,
+						bgRunningDisabled: lightBlueDisabled,
+						bgHolding: green,
+					},
+				},
+			],
+		}
+
+		this.data.livestreams
+			.map((live) => {
+				return {
+					category: 'Breaking Live',
+					type: 'button',
+					name: `BL ${live.label}`,
+					options: {},
+					style: {
+						text: `BL ${live.label}`,
+						size: pstSize,
+						color: '16777215',
+						bgcolor: darkGrey,
+					},
+					steps: [
+						{
+							down: [
+								{
+									actionId: 'breaking_news',
+									options: {
+										livestreamSelect: live.id,
+									},
+								},
+							],
+							up: [],
+						},
+					],
+					feedbacks: [
+						{
+							feedbackId: 'playbackStatus',
+							style: {
+								bgcolor: lightBlue,
+							},
+							options: {},
+						},
+						{
+							feedbackId: 'breakingLiveLivestreamStatus',
+							style: {
+								bgcolor: red,
+							},
+							options: {
+								livestreamSelect: live.id,
+							},
+						},
+					],
+				}
+			})
+			.forEach((element) => {
+				presets[element.name] = element
+			})
+	}
+
+	this.setPresetDefinitions(presets)
 }
