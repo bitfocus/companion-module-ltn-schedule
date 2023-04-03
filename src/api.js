@@ -60,6 +60,8 @@ export function initAPI() {
 						this.data.apiVersion = 4
 					} else if (message.apiVersion === '5') {
 						this.data.apiVersion = 5
+					} else if (message.apiVersion === '6') {
+						this.data.apiVersion = 6
 					} else if (typeof message.apiVersion !== 'undefined') {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
 					} else {
@@ -115,6 +117,14 @@ export function initAPI() {
 						this.data.hold = message.hold
 					}
 				}
+				if (this.data.apiVersion >= 6 && message.currentPlayoutItems !== 'undefined') {
+					if(this.data.templateInsertStatus !== 0 && this.data.upcomingElementId !== 'undefined' && this.data.upcomingElementId !== message.currentPlayoutItems.upcoming[0]) {
+						this.data.templateInsertStatus = 0
+						this.checkFeedbacks('templateInsertStatus')
+					}
+					this.data.upcomingElementId = message.currentPlayoutItems.upcoming[0];
+					this.checkFeedbacks('nextElementCaching', 'nextElementUnavailable')
+				}
 				this.checkFeedbacks('playbackStatus', 'publishStatus', 'skippableStatus', 'adTriggerStatus', 'targetsStatus')
 
 				if (this.data.apiVersion > 1) {
@@ -148,7 +158,23 @@ export function initAPI() {
 					this.init_feedbacks()
 					this.checkFeedbacks('breakingLiveLivestreamStatus')
 				}
-			}
+			} else if (message.messageId === 'templateUpdate' || message._messageId === 'templateUpdate') {
+				this.data.templates = []
+				message.templates.forEach((template) => {
+					var localTemplate = {}
+					localTemplate.id = template.id
+					localTemplate.label = template.name
+					this.data.templates.push(localTemplate)
+				})
+				this.actions()
+				this.updatePresets()
+			} else if (message.messageId === 'livestreamElementStatusUpdate' || message._messageId === 'livestreamElementStatusUpdate') {
+				this.data.elementsStatuses = {}
+				message.livestreamElements.forEach((statusInfo) => {
+					this.data.elementsStatuses[statusInfo.playlistId] = statusInfo.livestreamInfo.livestreamStatus
+				})
+				this.checkFeedbacks('nextElementCaching', 'nextElementUnavailable')
+			} 
 		})
 
 		this.socket.on('onclose', () => {

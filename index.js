@@ -13,6 +13,7 @@ export const darkGrey = combineRgb(27, 27, 27)
 export const lightGrey = combineRgb(117, 117, 117)
 export const green = combineRgb(93, 224, 130)
 export const red = combineRgb(231, 88, 59)
+export const yellow = combineRgb(255, 216, 98)
 export const black = combineRgb(255, 255, 255)
 
 /**
@@ -44,13 +45,24 @@ class LTNScheduleInstance extends InstanceBase {
 			livestreams: [
 				{
 					id: 'fill',
-					title: 'fill',
+					label: 'fill',
 				},
+			],
+			templates: [
+				{
+					id: 'fill',
+					label: 'fill'
+				}
 			],
 			htmlOverlayEnabled: false,
 			overlayEnabled: false,
 			currentItemHeld: null,
 			hold: false,
+			upcomingElementId: '',
+			elementsStatuses: {
+				fillId: 0
+			},
+			templateInsertStatus: 0
 		}
 
 	
@@ -65,8 +77,8 @@ class LTNScheduleInstance extends InstanceBase {
 		this.config.password = config.password
 
 		this.updateStatus('connecting', 'Connecting')
-		this.actions()
 		initAPI.bind(this)()
+		this.actions()
 		this.init_feedbacks()
 		initPresets.bind(this)()
 		this.updateVariableDefinitions()
@@ -74,9 +86,9 @@ class LTNScheduleInstance extends InstanceBase {
 
 	// New config saved
 	async configUpdated(config) {
-		this.actions()
 		this.config = config
 		initAPI.bind(this)()
+		this.actions()
 		this.init_feedbacks()
 		initPresets.bind(this)()
 	}

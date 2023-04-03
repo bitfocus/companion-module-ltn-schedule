@@ -1,5 +1,5 @@
 import { combineRgb } from '@companion-module/base'
-import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black } from '../index.js'
+import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black, yellow } from '../index.js'
 
 export function initPresets() {
 	const presets = {}
@@ -120,6 +120,35 @@ export function initPresets() {
 		],
 	}
 
+	var skipFeedbacks = []
+
+	skipFeedbacks.push({
+		feedbackId: 'skippableStatus',
+		options: {
+			fg: black,
+			bgDisabled: darkGrey,
+			bgEnabled: lightBlue,
+			bgSkipped: green,
+		},
+	})
+
+	if(this.data.apiVersion >= 6) {
+		skipFeedbacks.push({
+			feedbackId: 'nextElementUnavailable',
+			style: {
+				bgcolor: red,
+			},
+			options: {},
+		})
+		skipFeedbacks.push({
+			feedbackId: 'nextElementCaching',
+			style: {
+				bgcolor: yellow,
+			},
+			options: {},
+		})
+	}
+
 	presets.skip_element = {
 		category: 'Commands',
 		type: 'button',
@@ -144,17 +173,7 @@ export function initPresets() {
 				up: [],
 			},
 		],
-		feedbacks: [
-			{
-				feedbackId: 'skippableStatus',
-				options: {
-					fg: black,
-					bgDisabled: darkGrey,
-					bgEnabled: lightBlue,
-					bgSkipped: green,
-				},
-			},
-		],
+		feedbacks: skipFeedbacks,
 	}
 
 	presets.trigger_ad = {
@@ -213,6 +232,7 @@ export function initPresets() {
 							actionId: 'breaking_news',
 							options: {
 								livestreamSelect: 'select',
+								skipOnStop: false,
 							},
 						},
 					],
@@ -427,6 +447,48 @@ export function initPresets() {
 			.forEach((element) => {
 				presets[element.name] = element
 			})
+	}
+
+	if (this.data.apiVersion >= 6) {
+		presets.insert_template = {
+			category: 'Templates',
+			type: 'button',
+			name: `Insert template`,
+			options: {},
+			style: {
+				text: `Insert template`,
+				size: pstSize,
+				color: '16777215',
+				bgcolor: green,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'insert_template',
+							options: {
+								templatesSelect: 'select',
+								insertSelect: 'next',
+								conflictSelect: 'nothing',
+								skipOnReady: false
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'templateInsertStatus',
+					options: {
+						fg: black,
+						bgIdle: green,
+						bgImportRunning: yellow,
+						bgInsertFailed: red,
+					},
+				},
+			],
+		}
 	}
 
 	this.setPresetDefinitions(presets)
