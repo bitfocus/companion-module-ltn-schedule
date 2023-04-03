@@ -1,5 +1,5 @@
 import { combineRgb } from '@companion-module/base'
-import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black } from '../index.js'
+import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black, yellow } from '../index.js'
 
 export function initFeedbacks() {
 	const feedbacks = {}
@@ -316,6 +316,75 @@ export function initFeedbacks() {
 			callback: ({ options }) => {
 				if (this.data.breakingNewsRunning && this.data.breakingNewsCurrentId === options.livestreamSelect) {
 					return true
+				}
+			},
+		}
+	}
+
+	if (this.data.apiVersion >= 6) {
+		const UNAVAILABLE_STATUS = 0
+		const CACHING_STATUS = 1
+
+		feedbacks.nextElementCaching = {
+			type: 'boolean',
+			name: 'Next element caching',
+			description: 'Indicates if the upcoming element is caching',
+			defaultStyle: {
+				bgcolor: red,
+			},
+			options: [],
+			callback: ({ options }) => {
+				if (this.data.playoutRunning && this.data.elementsStatuses[this.data.upcomingElementId] === CACHING_STATUS) {
+					return true
+				}
+			},
+		}
+		feedbacks.nextElementUnavailable = {
+			type: 'boolean',
+			name: 'Next element unavailable',
+			description: 'Indicates if the upcoming element is unavailable',
+			defaultStyle: {
+				bgcolor: yellow,
+			},
+			options: [],
+			callback: ({ options }) => {
+				if (this.data.playoutRunning && this.data.elementsStatuses[this.data.upcomingElementId] === UNAVAILABLE_STATUS) {
+					return true
+				}
+			},
+		}
+		feedbacks.templateInsertStatus = {
+			type: 'advanced',
+			name: 'Status of the recent template insert',
+			description: 'Indicates if a triggered template insertion is running',
+			options: [
+				foregroundColor,
+				{
+					type: 'colorpicker',
+					label: 'Template can be inserted',
+					id: 'bgIdle',
+					default: green,
+				},
+				{
+					type: 'colorpicker',
+					label: 'Template is being imported',
+					id: 'bgImportRunning',
+					default: yellow,
+				},
+				{
+					type: 'colorpicker',
+					label: 'Template insertion failed',
+					id: 'bgInsertFailed',
+					default: red,
+				},
+			],
+			callback: ({ options }) => {
+				if (this.data.templateInsertStatus === 1) {
+					return { color: options.fg, bgcolor: options.bgImportRunning }
+				} else if (this.data.templateInsertStatus === 2) {
+					return { color: options.fg, bgcolor: options.bgInsertFailed }
+				} else {
+					return { color: options.fg, bgcolor: options.bgIdle }
 				}
 			},
 		}

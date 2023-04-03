@@ -1,4 +1,5 @@
 import got from 'got'
+import FormData from 'form-data';
 
 export function getActions() {
 	var skipOption = {}
@@ -311,25 +312,140 @@ export function getActions() {
 		}
 	}
 
+	if (this.data.apiVersion >= 6) {
+		actions.insert_template = {
+			name: 'Insert template',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Templates',
+					id: 'templatesSelect',
+					tooltip: 'What template do you want to insert?',
+					default: 'select',
+					choices: this.data.templates.concat({ id: 'select', label: 'Select a template' }),
+				},
+				{
+					type: 'dropdown',
+					label: 'Insert position',
+					id: 'insertSelect',
+					tooltip: 'Where do you want to insert the template?',
+					default: 'next',
+					choices: [
+						{
+							id: 'next', 
+							label: 'Next in rundown'
+						},
+						{
+							id: 'end', 
+							label: 'End of rundown'
+				   		}
+					],
+				},
+				{
+					type: 'dropdown',
+					label: 'Conflict resolution',
+					id: 'conflictSelect',
+					tooltip: 'How do you want to resolve conflicts?',
+					default: 'nothing',
+					choices: [
+						{
+							id: 'move', 
+							label: 'Move all following elements'
+						},
+						{
+							id: 'overwrite', 
+							label: 'Overwrite present elements'
+				   		},
+						{
+							id: 'nothing', 
+							label: 'Do not resolve conflicts'
+				   		}
+					],
+				},
+				{
+					type: 'checkbox',
+					label: 'Skip once template is inserted',
+					id: 'skipOnReady',
+					default: false,
+				}
+			],
+			callback: async (event) => {
+				var opt = event.options
+				var cmd
+				
+				cmd = '?id='+ opt.templatesSelect + '&insertPosition=' + opt.insertSelect + '&conflict=' + opt.conflictSelect + '&skipOnReady=' + opt.skipOnReady
+
+				sendAction.bind(this)('template/insert', cmd, () => {
+					if(opt.skipOnRead) {
+						this.data.templateInsertStatus = 1
+						this.checkFeedbacks('templateInsertStatus')
+						if (this.templateTimeout) {
+							clearTimeout(this.templateTimeout)
+						}
+					} else {
+						this.data.templateInsertStatus = 1
+						this.checkFeedbacks('templateInsertStatus')
+						if (this.templateTimeout) {
+							clearTimeout(this.templateTimeout)
+						}
+						this.templateTimeout = setTimeout(() => {
+							this.data.templateInsertStatus = 0
+							this.checkFeedbacks('templateInsertStatus')
+						}, 1000)
+					}
+				}, 
+				() => {
+					this.data.templateInsertStatus = 2
+					this.checkFeedbacks('templateInsertStatus')
+					if (this.templateTimeout) {
+						clearTimeout(this.templateTimeout)
+					}
+					this.templateTimeout = setTimeout(() => {
+						this.data.templateInsertStatus = 0
+						this.checkFeedbacks('templateInsertStatus')
+					}, 1000)
+				},
+				'POST')
+			},
+		}
+	}
+
 	return actions
 }
 
-function sendAction(apiEndpoint, cmd, callback) {
+function sendAction(apiEndpoint, cmd, callback, errorCallback, requestType) {
 	
 	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
 		var requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
 		this.log('info', `request ${requestString}`)
-		got
-			.get(requestString)
+		var req
+		if (requestType === 'POST')
+		{
+			this.log('info', 'isPostRequest')
+			const formData = new FormData();
+			req = got.post(requestString, 
+				{ body: formData })
+		}
+		else 
+		{
+			req = got.get(requestString)
+		}
+
+		req
 			.then((res) => {
 				if (res.statusCode === 200 && callback != null) {
 					callback.bind(this)(JSON.parse(res.body))
+				} else if (res.statusCode !== 200 && errorCallback != null) {
+					errorCallback.bind(this)()
 				}
 			})
 			.catch((err) => {
 				this.updateStatus('connection_failure', err)
-				this.log('info', 'Schedule API err:' + JSON.stringify(err))
+				this.log('info', 'Schedule API err:' + err)
+				if (errorCallback != null) {
+					errorCallback.bind(this)()
+				}
 			})
 	}
 }
