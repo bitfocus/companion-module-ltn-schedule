@@ -354,37 +354,30 @@ export function initFeedbacks() {
 			},
 		}
 		feedbacks.templateInsertStatus = {
-			type: 'advanced',
+			type: 'boolean',
 			name: 'Status of the recent template insert',
 			description: 'Indicates if a triggered template insertion is running',
+			defaultStyle: {
+				bgcolor: yellow,
+			},
 			options: [
-				foregroundColor,
 				{
-					type: 'colorpicker',
-					label: 'Template can be inserted',
-					id: 'bgIdle',
-					default: green,
-				},
-				{
-					type: 'colorpicker',
-					label: 'Template is being imported',
-					id: 'bgImportRunning',
-					default: yellow,
-				},
-				{
-					type: 'colorpicker',
-					label: 'Template insertion failed',
-					id: 'bgInsertFailed',
-					default: red,
-				},
+					type: 'dropdown',
+					label: 'Template insertion status',
+					id: 'insertStatus',
+					tooltip: 'What status do you want to track?',
+					default: '1',
+					choices: [
+						{ id: '1', label: 'Insertion is running' },
+						{ id: '2', label: 'Insertion has failed'}
+					],
+				}
 			],
 			callback: ({ options }) => {
-				if (this.data.templateInsertStatus === 1) {
-					return { color: options.fg, bgcolor: options.bgImportRunning }
-				} else if (this.data.templateInsertStatus === 2) {
-					return { color: options.fg, bgcolor: options.bgInsertFailed }
-				} else {
-					return { color: options.fg, bgcolor: options.bgIdle }
+				this.log('info', 'ah yes')
+				this.log('info', `request ${options.insertStatus}, data ${this.data.templateInsertStatus} ${String(this.data.templateInsertStatus) === options.insertStatus}`)
+				if (String(this.data.templateInsertStatus) === options.insertStatus) {
+					return true
 				}
 			},
 		}

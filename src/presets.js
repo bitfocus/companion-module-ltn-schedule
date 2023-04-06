@@ -480,11 +480,20 @@ export function initPresets() {
 			feedbacks: [
 				{
 					feedbackId: 'templateInsertStatus',
+					style: {
+						bgcolor: yellow,
+					},
 					options: {
-						fg: black,
-						bgIdle: green,
-						bgImportRunning: yellow,
-						bgInsertFailed: red,
+						insertStatus: '1',
+					},
+				},
+				{
+					feedbackId: 'templateInsertStatus',
+					style: {
+						bgcolor: red,
+					},
+					options: {
+						insertStatus: '2',
 					},
 				},
 			],

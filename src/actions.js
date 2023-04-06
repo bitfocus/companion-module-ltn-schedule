@@ -1,6 +1,8 @@
 import got from 'got'
 import FormData from 'form-data';
 
+export const formData = new FormData();
+
 export function getActions() {
 	var skipOption = {}
 	if (this.data.apiVersion > 0) {
@@ -423,7 +425,6 @@ function sendAction(apiEndpoint, cmd, callback, errorCallback, requestType) {
 		if (requestType === 'POST')
 		{
 			this.log('info', 'isPostRequest')
-			const formData = new FormData();
 			req = got.post(requestString, 
 				{ body: formData })
 		}
