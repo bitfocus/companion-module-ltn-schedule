@@ -356,7 +356,7 @@ export function initFeedbacks() {
 		feedbacks.templateInsertStatus = {
 			type: 'boolean',
 			name: 'Status of the recent template insert',
-			description: 'Indicates if a triggered template insertion is running',
+			description: 'Indicates if a triggered template insertion is running or has failed',
 			defaultStyle: {
 				bgcolor: yellow,
 			},
