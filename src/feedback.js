@@ -1,5 +1,5 @@
 import { combineRgb } from '@companion-module/base'
-import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black } from '../index.js'
+import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black, yellow } from '../index.js'
 
 export function initFeedbacks() {
 	const feedbacks = {}
@@ -315,6 +315,68 @@ export function initFeedbacks() {
 			options: [livestreams],
 			callback: ({ options }) => {
 				if (this.data.breakingNewsRunning && this.data.breakingNewsCurrentId === options.livestreamSelect) {
+					return true
+				}
+			},
+		}
+	}
+
+	if (this.data.apiVersion >= 6) {
+		const UNAVAILABLE_STATUS = 0
+		const CACHING_STATUS = 1
+
+		feedbacks.nextElementCaching = {
+			type: 'boolean',
+			name: 'Next element caching',
+			description: 'Indicates if the upcoming element is caching',
+			defaultStyle: {
+				bgcolor: red,
+			},
+			options: [],
+			callback: ({ options }) => {
+				if (this.data.playoutRunning && this.data.elementsStatuses[this.data.upcomingElementId] === CACHING_STATUS) {
+					return true
+				}
+			},
+		}
+		feedbacks.nextElementUnavailable = {
+			type: 'boolean',
+			name: 'Next element unavailable',
+			description: 'Indicates if the upcoming element is unavailable',
+			defaultStyle: {
+				bgcolor: yellow,
+			},
+			options: [],
+			callback: ({ options }) => {
+				if (this.data.playoutRunning && this.data.elementsStatuses[this.data.upcomingElementId] === UNAVAILABLE_STATUS) {
+					return true
+				}
+			},
+		}
+		feedbacks.templateInsertStatus = {
+			type: 'boolean',
+			name: 'Status of the recent template insert',
+			description: 'Indicates if a triggered template insertion is running or has failed',
+			defaultStyle: {
+				bgcolor: yellow,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Template insertion status',
+					id: 'insertStatus',
+					tooltip: 'What status do you want to track?',
+					default: '1',
+					choices: [
+						{ id: '1', label: 'Insertion is running' },
+						{ id: '2', label: 'Insertion has failed'}
+					],
+				}
+			],
+			callback: ({ options }) => {
+				this.log('info', 'ah yes')
+				this.log('info', `request ${options.insertStatus}, data ${this.data.templateInsertStatus} ${String(this.data.templateInsertStatus) === options.insertStatus}`)
+				if (String(this.data.templateInsertStatus) === options.insertStatus) {
 					return true
 				}
 			},
