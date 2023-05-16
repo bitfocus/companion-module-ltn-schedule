@@ -374,8 +374,6 @@ export function initFeedbacks() {
 				}
 			],
 			callback: ({ options }) => {
-				this.log('info', 'ah yes')
-				this.log('info', `request ${options.insertStatus}, data ${this.data.templateInsertStatus} ${String(this.data.templateInsertStatus) === options.insertStatus}`)
 				if (String(this.data.templateInsertStatus) === options.insertStatus) {
 					return true
 				}
