@@ -132,7 +132,7 @@ export function initPresets() {
 		},
 	})
 
-	if(this.data.apiVersion >= 6) {
+	if (this.data.apiVersion >= 6) {
 		skipFeedbacks.push({
 			feedbackId: 'nextElementUnavailable',
 			style: {
@@ -182,7 +182,7 @@ export function initPresets() {
 		name: 'Trigger ad',
 		options: {},
 		style: {
-			text: 'Trigger ad',
+			text: 'Ad break',
 			size: pstSize,
 			color: '16777215',
 			bgcolor: combineRgb(0, 0, 0),
@@ -213,6 +213,34 @@ export function initPresets() {
 		],
 	}
 
+	var breakingNewsFeedbacks = []
+
+	breakingNewsFeedbacks.push({
+		feedbackId: 'playbackStatus',
+		style: {
+			bgcolor: lightBlue,
+		},
+		options: {},
+	})
+
+	breakingNewsFeedbacks.push({
+		feedbackId: 'breakingNewsStatus',
+		style: {
+			bgcolor: red,
+		},
+		options: {},
+	})
+
+	if (this.data.apiVersion >= 7) {
+		breakingNewsFeedbacks.push({
+			feedbackId: 'breakingLiveBumperStatus',
+			style: {
+				bgcolor: yellow,
+			},
+			options: {},
+		})
+	}
+
 	if (this.data.apiVersion > 1) {
 		presets.toggle_breaking_news = {
 			category: 'Commands',
@@ -239,22 +267,7 @@ export function initPresets() {
 					up: [],
 				},
 			],
-			feedbacks: [
-				{
-					feedbackId: 'playbackStatus',
-					style: {
-						bgcolor: lightBlue,
-					},
-					options: {},
-				},
-				{
-					feedbackId: 'breakingNewsStatus',
-					style: {
-						bgcolor: red,
-					},
-					options: {},
-				},
-			],
+			feedbacks: breakingNewsFeedbacks,
 		}
 	}
 
@@ -400,6 +413,36 @@ export function initPresets() {
 
 		this.data.livestreams
 			.map((live) => {
+				var liveFeedback = []
+
+				liveFeedback.push({
+					feedbackId: 'playbackStatus',
+					style: {
+						bgcolor: lightBlue,
+					},
+					options: {},
+				})
+
+				liveFeedback.push({
+					feedbackId: 'breakingLiveLivestreamStatus',
+					style: {
+						bgcolor: red,
+					},
+					options: {
+						livestreamSelect: live.id,
+					},
+				})
+
+				if (this.data.apiVersion >= 7) {
+					liveFeedback.push({
+						feedbackId: 'breakingLiveBumperStatus',
+						style: {
+							bgcolor: yellow,
+						},
+						options: {},
+					})
+				}
+
 				return {
 					category: 'Breaking Live',
 					type: 'button',
@@ -424,24 +467,7 @@ export function initPresets() {
 							up: [],
 						},
 					],
-					feedbacks: [
-						{
-							feedbackId: 'playbackStatus',
-							style: {
-								bgcolor: lightBlue,
-							},
-							options: {},
-						},
-						{
-							feedbackId: 'breakingLiveLivestreamStatus',
-							style: {
-								bgcolor: red,
-							},
-							options: {
-								livestreamSelect: live.id,
-							},
-						},
-					],
+					feedbacks: liveFeedback,
 				}
 			})
 			.forEach((element) => {
@@ -470,7 +496,7 @@ export function initPresets() {
 								templatesSelect: 'select',
 								insertSelect: 'next',
 								conflictSelect: 'nothing',
-								skipOnReady: false
+								skipOnReady: false,
 							},
 						},
 					],
@@ -494,6 +520,154 @@ export function initPresets() {
 					},
 					options: {
 						insertStatus: '2',
+					},
+				},
+			],
+		}
+	}
+
+	if (this.data.apiVersion >= 7) {
+		presets.sync_status = {
+			category: 'Commands',
+			type: 'button',
+			name: `Sync status`,
+			options: {},
+			style: {
+				text: `Sync`,
+				size: pstSize,
+				color: '16777215',
+				bgcolor: darkGrey,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'resync',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'syncStatus',
+					options: {
+						fg: black,
+						bgUninitialized: darkGrey,
+						bgCatchingUp: yellow,
+						bgSynced: green,
+						bgError: red,
+					},
+				},
+			],
+		}
+
+		presets.total_remaining_time = {
+			category: 'Timers',
+			type: 'button',
+			name: `Total Remaining Time`,
+			options: {},
+			style: {
+				text: `Remaining time\n$(generic-module:totalRemainingTime)`,
+				size: 11,
+				color: lightBlue,
+				bgcolor: darkGrey,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets.total_played_time = {
+			category: 'Timers',
+			type: 'button',
+			name: `Total Played Time`,
+			options: {},
+			style: {
+				text: `Played time\n$(generic-module:totalPlayedTime)`,
+				size: 11,
+				color: green,
+				bgcolor: darkGrey,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets.current_remaining_time = {
+			category: 'Timers',
+			type: 'button',
+			name: `Current Remaining Time`,
+			options: {},
+			style: {
+				text: `Element time\n$(generic-module:currentRemainingTime)`,
+				size: 11,
+				color: red,
+				bgcolor: darkGrey,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets.total_duration = {
+			category: 'Timers',
+			type: 'button',
+			name: `Total Duration`,
+			options: {},
+			style: {
+				text: `Total duration\n$(generic-module:totalDuration)`,
+				size: 11,
+				color: '16777215',
+				bgcolor: darkGrey,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+
+		presets.ad_remaining_time = {
+			category: 'Timers',
+			type: 'button',
+			name: `Ad break remaining time`,
+			options: {},
+			style: {
+				text: `$(generic-module:adRemainingTime)`,
+				size: pstSize,
+				color: '16777215',
+				bgcolor: darkGrey,
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'adTriggerStatus',
+					options: {
+						fg: black,
+						bgDisabled: darkGrey,
+						bgEnabled: lightBlue,
+						bgPushing: green,
 					},
 				},
 			],
