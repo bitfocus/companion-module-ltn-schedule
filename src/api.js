@@ -62,14 +62,17 @@ export function initAPI() {
 						this.data.apiVersion = 5
 					} else if (message.apiVersion === '6') {
 						this.data.apiVersion = 6
+					} else if (message.apiVersion === '7') {
+						this.data.apiVersion = 7
 					} else if (typeof message.apiVersion !== 'undefined') {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
 					} else {
 						this.data.apiVersion = 0
 					}
+					this.log('info', 'Api version: ' + this.data.apiVersion)
 					this.updateElements()
 				} else {
-					this.updateStatus('bad_config', 'Authentication failed')
+					this.updateStatus('authentication_failure', 'Authentication failed')
 				}
 			} else if (
 				(message.messageId === 'pushTargetUpdate' || message._messageId === 'pushTargetUpdate') &&
@@ -92,10 +95,19 @@ export function initAPI() {
 				if (this.data.apiVersion >= 5) {
 					this.data.overlayEnabled = message.playoutSettings.overlayEnabled
 					this.data.htmlOverlayEnabled = message.playoutSettings.html5OverlayEnabled
-					this.data.breakingNewsCurrentId = message.playoutSettings.breakingLiveLivestreamId
+					if (this.data.apiVersion < 7) {
+						this.data.breakingNewsCurrentId = message.playoutSettings.breakingLiveLivestreamId
+					}
 				}
 				this.checkFeedbacks('overlayStatus', 'htmlOverlayStatus', 'breakingNewsStatus', 'breakingLiveLivestreamStatus')
 				this.updatePresets()
+			} else if (
+				(message.messageId === 'statusUpdate' || message._messageId === 'statusUpdate') &&
+				this.data.apiVersion >= 7
+			) {
+				this.data.startstamp = message.startStamp
+				this.data.playlistLength = message.playoutListLengthMs
+				this.data.currentEndstamp = message.currentElementEnd
 			} else if (message.messageId === 'playout_update' || message._messageId === 'playout_update') {
 				if (this.data.apiVersion > 0) {
 					this.data.playoutRunning = message.activated
@@ -103,7 +115,7 @@ export function initAPI() {
 					this.data.playoutRunning = message.playoutRunning
 				}
 				this.data.publishRunning = message.publishRunning
-				if (this.data.apiVersion > 1) {
+				if (this.data.apiVersion > 1 && this.data.apiVersion < 7) {
 					this.data.breakingNewsRunning = message.breakingNewsRunning
 				}
 				if (message.playoutItemIndex != -1) {
@@ -118,11 +130,15 @@ export function initAPI() {
 					}
 				}
 				if (this.data.apiVersion >= 6 && message.currentPlayoutItems !== 'undefined') {
-					if(this.data.templateInsertStatus !== 0 && this.data.upcomingElementId !== 'undefined' && this.data.upcomingElementId !== message.currentPlayoutItems.upcoming[0]) {
+					if (
+						this.data.templateInsertStatus !== 0 &&
+						this.data.upcomingElementId !== 'undefined' &&
+						this.data.upcomingElementId !== message.currentPlayoutItems.upcoming[0]
+					) {
 						this.data.templateInsertStatus = 0
 						this.checkFeedbacks('templateInsertStatus')
 					}
-					this.data.upcomingElementId = message.currentPlayoutItems.upcoming[0];
+					this.data.upcomingElementId = message.currentPlayoutItems.upcoming[0]
 					this.checkFeedbacks('nextElementCaching', 'nextElementUnavailable')
 				}
 				this.checkFeedbacks('playbackStatus', 'publishStatus', 'skippableStatus', 'adTriggerStatus', 'targetsStatus')
@@ -133,18 +149,37 @@ export function initAPI() {
 				if (this.data.apiVersion >= 5) {
 					this.checkFeedbacks('holdStatus', 'breakingLiveLivestreamStatus')
 				}
+			} else if (
+				(message.messageId === 'breaking_live_status' || message._messageId === 'breaking_live_status') &&
+				this.data.apiVersion > 6
+			) {
+				this.data.breakingNewsCurrentId = message.breakingLiveId
+				this.data.breakingNewsRunning = message.breakingLiveRunning
+				this.data.bumperRunning = message.postrollStartTimestamp !== -1 || message.prerollStartTimestamp !== -1
+
+				this.checkFeedbacks('breakingNewsStatus', 'breakingLiveLivestreamStatus', 'breakingLiveBumperStatus')
 			} else if (message.messageId === 'ad_triggered' || message._messageId === 'ad_triggered') {
-				this.data.adRunning = message.adLength
-				if (this.adTimeout) {
-					clearTimeout(this.adTimeout)
-				}
-				this.adTimeout = setTimeout(() => {
-					this.data.adRunning = 0
+				if (this.data.apiVersion < 7 || message.adLength > this.data.adRunning + 1 || message.adLength == 0) {
+					this.data.adRunning = message.adLength
+					if (this.adTimeout) {
+						clearTimeout(this.adTimeout)
+					}
+					this.adTimeout = setTimeout(() => {
+						this.data.adRunning = 0
+						this.checkFeedbacks('adTriggerStatus')
+					}, message.adLength * 1000)
 					this.checkFeedbacks('adTriggerStatus')
-				}, message.adLength * 1000)
-				this.checkFeedbacks('adTriggerStatus')
+				}
+			} else if (
+				message.messageId === 'redundancy_status_change' ||
+				(message._messageId === 'redundancy_status_change' && this.data.apiVersion > 6)
+			) {
+				this.data.syncStatus = message.redundancyStatus
+				this.checkFeedbacks('syncStatus')
 			} else if (message.messageId === 'livestreamUpdate' || message._messageId === 'livestreamUpdate') {
-				this.data.breakingNewsCurrentId = message.breakingNewsCurrentId
+				if (this.data.apiVersion < 7) {
+					this.data.breakingNewsCurrentId = message.breakingNewsCurrentId
+				}
 				this.data.livestreams = []
 				message.livestreams.forEach((livestream) => {
 					var localLivestream = {}
@@ -168,13 +203,16 @@ export function initAPI() {
 				})
 				this.actions()
 				this.updatePresets()
-			} else if (message.messageId === 'livestreamElementStatusUpdate' || message._messageId === 'livestreamElementStatusUpdate') {
+			} else if (
+				message.messageId === 'livestreamElementStatusUpdate' ||
+				message._messageId === 'livestreamElementStatusUpdate'
+			) {
 				this.data.elementsStatuses = {}
 				message.livestreamElements.forEach((statusInfo) => {
 					this.data.elementsStatuses[statusInfo.playlistId] = statusInfo.livestreamInfo.livestreamStatus
 				})
 				this.checkFeedbacks('nextElementCaching', 'nextElementUnavailable')
-			} 
+			}
 		})
 
 		this.socket.on('onclose', () => {

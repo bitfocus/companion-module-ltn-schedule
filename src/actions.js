@@ -1,5 +1,5 @@
 import got from 'got'
-import FormData from 'form-data';
+import FormData from 'form-data'
 
 export function getActions() {
 	var skipOption = {}
@@ -212,8 +212,15 @@ export function getActions() {
 				var cmd
 				var apiEndpoint
 
-				if (!this.data.breakingNewsRunning
-					|| (this.data.apiVersion >= 5 &&  opt.livestreamSelect !== 'select' && this.data.breakingNewsCurrentId !== opt.livestreamSelect)) {
+				if (this.data.bumperRunning && this.data.apiVersion >= 7) {
+					apiEndpoint = 'breakinglive/cancelbumper'
+					cmd = ''
+				} else if (
+					!this.data.breakingNewsRunning ||
+					(this.data.apiVersion >= 5 &&
+						opt.livestreamSelect !== 'select' &&
+						this.data.breakingNewsCurrentId !== opt.livestreamSelect)
+				) {
 					apiEndpoint = 'breakinglive/start'
 					cmd = ''
 					if (opt.livestreamSelect !== 'select') {
@@ -255,16 +262,19 @@ export function getActions() {
 			callback: async (event) => {
 				var cmd
 				var apiEndpoint
+				var type
 
 				if (!this.data.overlayEnabled) {
 					apiEndpoint = 'overlay/static/activate'
 					cmd = ''
+					type = 'POST'
 				} else {
 					apiEndpoint = 'overlay/static/deactivate'
 					cmd = ''
+					type = 'GET'
 				}
 
-				sendAction.bind(this)(apiEndpoint, cmd)
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, type)
 			},
 		}
 
@@ -332,13 +342,13 @@ export function getActions() {
 					default: 'next',
 					choices: [
 						{
-							id: 'next', 
-							label: 'Next in rundown'
+							id: 'next',
+							label: 'Next in rundown',
 						},
 						{
-							id: 'end', 
-							label: 'End of rundown'
-				   		}
+							id: 'end',
+							label: 'End of rundown',
+						},
 					],
 				},
 				{
@@ -349,17 +359,17 @@ export function getActions() {
 					default: 'nothing',
 					choices: [
 						{
-							id: 'move', 
-							label: 'Move all following elements'
+							id: 'move',
+							label: 'Move all following elements',
 						},
 						{
-							id: 'overwrite', 
-							label: 'Overwrite present elements'
-				   		},
+							id: 'overwrite',
+							label: 'Overwrite present elements',
+						},
 						{
-							id: 'nothing', 
-							label: 'Do not resolve conflicts'
-				   		}
+							id: 'nothing',
+							label: 'Do not resolve conflicts',
+						},
 					],
 				},
 				{
@@ -367,23 +377,46 @@ export function getActions() {
 					label: 'Skip once template is inserted',
 					id: 'skipOnReady',
 					default: false,
-				}
+				},
 			],
 			callback: async (event) => {
 				var opt = event.options
 				var cmd
-				
-				cmd = '?id='+ opt.templatesSelect + '&insertPosition=' + opt.insertSelect + '&conflict=' + opt.conflictSelect + '&skipOnReady=' + opt.skipOnReady
 
-				sendAction.bind(this)('template/insert', cmd, () => {
-					if(opt.skipOnRead) {
-						this.data.templateInsertStatus = 1
-						this.checkFeedbacks('templateInsertStatus')
-						if (this.templateTimeout) {
-							clearTimeout(this.templateTimeout)
+				cmd =
+					'?id=' +
+					opt.templatesSelect +
+					'&insertPosition=' +
+					opt.insertSelect +
+					'&conflict=' +
+					opt.conflictSelect +
+					'&skipOnReady=' +
+					opt.skipOnReady
+
+				sendAction.bind(this)(
+					'template/insert',
+					cmd,
+					() => {
+						if (opt.skipOnReady) {
+							this.data.templateInsertStatus = 1
+							this.checkFeedbacks('templateInsertStatus')
+							if (this.templateTimeout) {
+								clearTimeout(this.templateTimeout)
+							}
+						} else {
+							this.data.templateInsertStatus = 1
+							this.checkFeedbacks('templateInsertStatus')
+							if (this.templateTimeout) {
+								clearTimeout(this.templateTimeout)
+							}
+							this.templateTimeout = setTimeout(() => {
+								this.data.templateInsertStatus = 0
+								this.checkFeedbacks('templateInsertStatus')
+							}, 1000)
 						}
-					} else {
-						this.data.templateInsertStatus = 1
+					},
+					() => {
+						this.data.templateInsertStatus = 2
 						this.checkFeedbacks('templateInsertStatus')
 						if (this.templateTimeout) {
 							clearTimeout(this.templateTimeout)
@@ -392,20 +425,25 @@ export function getActions() {
 							this.data.templateInsertStatus = 0
 							this.checkFeedbacks('templateInsertStatus')
 						}, 1000)
-					}
-				}, 
-				() => {
-					this.data.templateInsertStatus = 2
-					this.checkFeedbacks('templateInsertStatus')
-					if (this.templateTimeout) {
-						clearTimeout(this.templateTimeout)
-					}
-					this.templateTimeout = setTimeout(() => {
-						this.data.templateInsertStatus = 0
-						this.checkFeedbacks('templateInsertStatus')
-					}, 1000)
-				},
-				'POST')
+					},
+					'POST'
+				)
+			},
+		}
+	}
+
+	if (this.data.apiVersion >= 7) {
+		actions.resync = {
+			name: 'Resync systems',
+			options: [],
+			callback: async (event) => {
+				var cmd
+				var apiEndpoint
+
+				apiEndpoint = 'playout/resync'
+				cmd = ''
+
+				sendAction.bind(this)(apiEndpoint, cmd)
 			},
 		}
 	}
@@ -414,22 +452,15 @@ export function getActions() {
 }
 
 function sendAction(apiEndpoint, cmd, callback, errorCallback, requestType) {
-	
 	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
 		var requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
 		this.log('info', `request ${requestString}`)
 		var req
-		if (requestType === 'POST')
-		{
-			var formData = new FormData();
-
-			this.log('info', 'isPostRequest')
-			req = got.post(requestString, 
-				{ body: formData })
-		}
-		else 
-		{
+		if (requestType === 'POST') {
+			var formData = new FormData()
+			req = got.post(requestString, { body: formData })
+		} else {
 			req = got.get(requestString)
 		}
 

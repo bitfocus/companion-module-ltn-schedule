@@ -1,10 +1,15 @@
-import { CreateConvertToBooleanFeedbackUpgradeScript, InstanceBase, runEntrypoint, combineRgb } from '@companion-module/base'
+import {
+	CreateConvertToBooleanFeedbackUpgradeScript,
+	InstanceBase,
+	runEntrypoint,
+	combineRgb,
+} from '@companion-module/base'
 
 import { getActions } from './src/actions.js'
 import { initAPI } from './src/api.js'
 import { getConfigFields } from './src/config.js'
 import { initFeedbacks } from './src/feedback.js'
-import { updateVariableDefinitions } from './src/variables.js'
+import { updateVariableDefinitions, updateVariables } from './src/variables.js'
 import { initPresets } from './src/presets.js'
 
 export const lightBlue = combineRgb(91, 198, 233)
@@ -20,7 +25,6 @@ export const black = combineRgb(255, 255, 255)
  * Companion instance class for LTN Schedule
  */
 class LTNScheduleInstance extends InstanceBase {
-	
 	constructor(internal) {
 		super(internal)
 
@@ -51,8 +55,8 @@ class LTNScheduleInstance extends InstanceBase {
 			templates: [
 				{
 					id: 'fill',
-					label: 'fill'
-				}
+					label: 'fill',
+				},
 			],
 			htmlOverlayEnabled: false,
 			overlayEnabled: false,
@@ -60,13 +64,15 @@ class LTNScheduleInstance extends InstanceBase {
 			hold: false,
 			upcomingElementId: '',
 			elementsStatuses: {
-				fillId: 0
+				fillId: 0,
 			},
-			templateInsertStatus: 0
+			templateInsertStatus: 0,
+			syncStatus: 0,
+			bumperRunning: false,
+			startstamp: 0,
+			playlistLength: 0,
+			currentEndstamp: 0,
 		}
-
-	
-		this.updateVariableDefinitions = updateVariableDefinitions
 	}
 
 	async init(config) {
@@ -76,12 +82,20 @@ class LTNScheduleInstance extends InstanceBase {
 		this.config.username = config.username
 		this.config.password = config.password
 
-		this.updateStatus('connecting', 'Connecting')
+		if (this.config.host === '') {
+			this.updateStatus('bad_config', 'Configuration required')
+		} else {
+			this.updateStatus('connecting', 'Connecting')
+		}
 		initAPI.bind(this)()
 		this.actions()
 		this.init_feedbacks()
+
+		updateVariableDefinitions.bind(this)()
+		updateVariables.bind(this)()
+		this.variableUpdates = setInterval(updateVariables.bind(this), 1000)
+
 		initPresets.bind(this)()
-		this.updateVariableDefinitions()
 	}
 
 	// New config saved
@@ -118,6 +132,11 @@ class LTNScheduleInstance extends InstanceBase {
 		if (this.socket) {
 			this.socket.close()
 			delete this.socket
+		}
+
+		if (this.variableUpdates) {
+			clearInterval(this.variableUpdates)
+			delete this.variableUpdates
 		}
 	}
 
