@@ -478,6 +478,19 @@ export function initFeedbacks() {
 				return this.data.flexiblePlaybackEnabled
 			},
 		}
+
+		feedbacks.outputScalingStatus = {
+			type: 'boolean',
+			name: 'Output scaling status',
+			description: 'Indicates if output scaling is activated',
+			defaultStyle: {
+				bgcolor: green,
+			},
+			options: [],
+			callback: ({ options }) => {
+				return this.data.outputScalingEnabled
+			},
+		}
 	}
 
 	return feedbacks

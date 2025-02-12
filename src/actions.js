@@ -461,10 +461,24 @@ export function getActions() {
 					id: 'index',
 					type: 'number',
 					label: 'Element Index',
-				}
+				}, {
+					id: 'title',
+					type: 'textinput',
+					label: 'Element title',
+				},
+				{
+					id: 'customKey',
+					type: 'textinput',
+					label: 'Element custom key',
+				},
+        {
+          id: 'customValue',
+          type: 'textinput',
+          label: 'Element custom value',
+        }
 			],
 			callback: async (event) => {
-				var cmd
+				var cmd = ''
 				var apiEndpoint
 				var opt = event.options
 
@@ -472,13 +486,38 @@ export function getActions() {
 				if (opt.id) {
 					cmd = '?id=' + opt.id
 				}
-				else {
-					cmd = '?index=' + opt.index
+        else if (opt.title) {
+          cmd = '?title=' + opt.title
+        }
+        else if (opt.customKey && opt.customValue) {
+          cmd = '?custom-key=' + opt.customKey + '&custom-value=' + opt.customValue
+        }
+				else if (opt.customKey || opt.customValue) {
+					cmd = ''
 				}
+        else {
+          cmd = '?index=' + opt.index
+        }
 
 				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'POST')
 			},
 		}
+
+    actions.scaling = {
+      name: 'Toggle output scaling',
+      options: [],
+      callback: async (event) => {
+        var cmd
+        var apiEndpoint = 'playout/scaling/set'
+
+          if (this.data.outputScalingEnabled) {
+            cmd = '?enabled=false'
+          } else {
+            cmd = '?enabled=true'
+          }
+        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'POST')
+      },
+    }
 	}
 
 	return actions

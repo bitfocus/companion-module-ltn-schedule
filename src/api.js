@@ -106,7 +106,8 @@ export function initAPI() {
 				if (this.data.apiVersion >= 8)
 				{
 					this.data.flexiblePlaybackEnabled = message.playoutSettings.flexiblePlaybackEnabled
-					this.checkFeedbacks('flexiblePlaybackStatus')
+					this.data.outputScalingEnabled = message.playoutSettings.outputScalingSettings.enabled
+					this.checkFeedbacks('flexiblePlaybackStatus', 'outputScalingStatus')
 				}
 				this.checkFeedbacks('overlayStatus', 'htmlOverlayStatus', 'breakingNewsStatus', 'breakingLiveLivestreamStatus')
 				this.updatePresets()

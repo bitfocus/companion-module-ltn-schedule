@@ -759,6 +759,37 @@ export function initPresets() {
 				},
 			],
 		}
+
+		presets.toggle_scaling = {
+			category: 'Commands',
+			type: 'button',
+			name: `Toggle output scaling`,
+			options: {},
+			style: {
+				text: `Toggle scaling`,
+				size: pstSize,
+				color: '16777215',
+				bgcolor: red,
+			},
+			steps: [
+				{
+					down: [{
+						actionId: 'scaling',
+						options: {},
+					}],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'outputScalingStatus',
+					style: {
+						bgcolor: green,
+					},
+					options: {},
+				}
+			],
+		}
 	}
 
 	this.setPresetDefinitions(presets)
