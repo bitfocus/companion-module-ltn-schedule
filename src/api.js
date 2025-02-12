@@ -101,8 +101,6 @@ export function initAPI() {
 						this.data.breakingNewsCurrentId = message.playoutSettings.breakingLiveLivestreamId
 					}
 				}
-				this.log('info', 'Inhfo ?' + message.playoutSettings.flexiblePlaybackEnabled)
-
 				if (this.data.apiVersion >= 8)
 				{
 					this.data.flexiblePlaybackEnabled = message.playoutSettings.flexiblePlaybackEnabled
@@ -152,7 +150,6 @@ export function initAPI() {
 					this.checkFeedbacks('nextElementCaching', 'nextElementUnavailable')
 				}
 				this.data.elementRunningIndex = message.playoutItemIndex
-				this.log('info', 'Ah: ' + message.currentPlayoutItems.current + ' ah2 ' + message.playoutItemIndex)
 				if (this.data.apiVersion >= 8 && message.currentPlayoutItems !== 'undefined')
 				{
 					this.data.elementRunning = message.currentPlayoutItems.current[0]
