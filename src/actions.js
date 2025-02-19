@@ -448,6 +448,78 @@ export function getActions() {
 		}
 	}
 
+	if (this.data.apiVersion >= 8) {
+		actions.jumpTo = {
+			name: 'Jump to an element',
+			options: [
+				{
+					id: 'id',
+					type: 'textinput',
+					label: 'Element Id',
+				},
+				{
+					id: 'index',
+					type: 'number',
+					label: 'Element Index',
+				}, {
+					id: 'title',
+					type: 'textinput',
+					label: 'Element title',
+				},
+				{
+					id: 'customKey',
+					type: 'textinput',
+					label: 'Element custom key',
+				},
+        {
+          id: 'customValue',
+          type: 'textinput',
+          label: 'Element custom value',
+        }
+			],
+			callback: async (event) => {
+				var cmd = ''
+				var apiEndpoint
+				var opt = event.options
+
+				apiEndpoint = 'playout/jump'
+				if (opt.id) {
+					cmd = '?id=' + opt.id
+				}
+        else if (opt.title) {
+          cmd = '?title=' + opt.title
+        }
+        else if (opt.customKey && opt.customValue) {
+          cmd = '?custom-key=' + opt.customKey + '&custom-value=' + opt.customValue
+        }
+				else if (opt.customKey || opt.customValue) {
+					cmd = ''
+				}
+        else {
+          cmd = '?index=' + opt.index
+        }
+
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'POST')
+			},
+		}
+
+    actions.scaling = {
+      name: 'Toggle output scaling',
+      options: [],
+      callback: async (event) => {
+        var cmd
+        var apiEndpoint = 'playout/scaling/set'
+
+          if (this.data.outputScalingEnabled) {
+            cmd = '?enabled=false'
+          } else {
+            cmd = '?enabled=true'
+          }
+        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'POST')
+      },
+    }
+	}
+
 	return actions
 }
 

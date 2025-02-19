@@ -4,6 +4,50 @@ import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black, y
 export function initPresets() {
 	const presets = {}
 	const pstSize = '18'
+
+	const createJumpToPreset = (name, options) => (
+		{
+			category: 'Commands',
+			type: 'button',
+			name: `Jump to ${name}`,
+			options: {},
+			style: {
+				text: `Jump to ${name}`,
+				size: pstSize,
+				color: '16777215',
+				bgcolor: darkGrey,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'jumpTo',
+							options: options,
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'flexiblePlaybackStatus',
+					style: {
+						bgcolor: green,
+					},
+					options: {},
+				},
+				{
+					feedbackId: 'playedElementStatus',
+					style: {
+						bgcolor: red,
+					},
+					options: options,
+				},
+			],
+		}
+	);
+
+
 	this.data.targets
 		.map((target) => {
 			return {
@@ -674,5 +718,51 @@ export function initPresets() {
 		}
 	}
 
+	if (this.data.apiVersion >= 8) {
+
+		presets.jump_to_id = createJumpToPreset('ID', {id: "id to fill"})
+		presets.jump_to_index = createJumpToPreset('Index', {index: '0'})
+		presets.jump_to_title = createJumpToPreset('Title', {title: "title"})
+		presets.jump_to_custom = createJumpToPreset('Key', {
+			customKey: "custom key",
+			customValue: "custom value"
+		})
+
+
+		presets.toggle_scaling = {
+			category: 'Commands',
+			type: 'button',
+			name: `Toggle output scaling`,
+			options: {},
+			style: {
+				text: `Toggle scaling`,
+				size: pstSize,
+				color: '16777215',
+				bgcolor: red,
+			},
+			steps: [
+				{
+					down: [{
+						actionId: 'scaling',
+						options: {},
+					}],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'outputScalingStatus',
+					style: {
+						bgcolor: green,
+					},
+					options: {},
+				}
+			],
+		}
+	}
+
 	this.setPresetDefinitions(presets)
+
+
 }
+
