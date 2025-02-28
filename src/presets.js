@@ -238,6 +238,7 @@ export function initPresets() {
 						actionId: 'playback_ad',
 						options: {
 							adLength: '30',
+							triggerType: 'LOCAL'
 						},
 					},
 				],
