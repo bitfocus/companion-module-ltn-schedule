@@ -151,36 +151,66 @@ export function getActions() {
 				sendAction.bind(this)(apiEndpoint, cmd)
 			},
 		},
-		playback_ad: {
-			name: 'Trigger an ad',
-			options: [
-				{
-					type: 'number',
-					label: 'Ad Length',
-					id: 'adLength',
-					tooltip: 'Sets the ad length (in seconds)',
-					min: 0,
-					max: 3600,
-					default: 0,
-					required: true,
-					range: false,
-				},
-			],
-			callback: async (event) => {
-				var opt = event.options
-				var cmd
-				var apiEndpoint
+	}
 
-				if (
-					this.data.adRunning == 0 &&
-					this.data.playoutRunning &&
-					(this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)
-				) {
-					apiEndpoint = 'playout/ad'
-					cmd = '?adLength=' + opt.adLength
-				}
-				sendAction.bind(this)(apiEndpoint, cmd)
-			},
+	var adOptions = [
+		{
+			type: 'number',
+			label: 'Ad Length',
+			id: 'adLength',
+			tooltip: 'Sets the ad length (in seconds)',
+			min: 0,
+			max: 3600,
+			default: 0,
+			required: true,
+			range: false,
+		},
+	]
+
+	if(this.data.apiVersion >= 6)
+	{
+		adOptions.push({
+				type: 'dropdown',
+				label: 'SCTE Trigger type',
+				id: 'triggerType',
+				tooltip: 'What type of SCTE35 trigger do you want to send?',
+				default: 'local',
+				choices: [
+					{
+						id: 'LOCAL',
+						label: 'Local',
+					},
+					{
+						id: 'NATIONAL',
+						label: 'National',
+					},
+				],
+		})
+	}
+
+
+	actions.playback_ad = {
+		name: 'Trigger an ad',
+		options: adOptions,
+		callback: async (event) => {
+			var opt = event.options
+			var cmd
+			var apiEndpoint
+
+			if (
+			this.data.adRunning == 0 &&
+			this.data.playoutRunning &&
+			(this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)
+			) {
+				apiEndpoint = 'playout/ad'
+				cmd = '?adLength=' + opt.adLength
+			}
+			if(opt.triggerType)
+			{
+				cmd = cmd + '&triggerType=' + opt.triggerType
+			}
+
+			sendAction.bind(this)(apiEndpoint, cmd)
 		},
 	}
 
