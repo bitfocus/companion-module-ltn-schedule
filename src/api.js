@@ -82,7 +82,7 @@ export function initAPI() {
 			) {
 				this.data.targets = []
 				message.pushTargetsList.forEach((target) => {
-					var localTarget = {}
+					let localTarget = {}
 					localTarget.id = target.id
 					localTarget.label = target.targetName
 					localTarget.enabled = target.enabled
@@ -200,7 +200,7 @@ export function initAPI() {
 				}
 				this.data.livestreams = []
 				message.livestreams.forEach((livestream) => {
-					var localLivestream = {}
+					let localLivestream = {}
 					localLivestream.id = livestream.id
 					localLivestream.label = livestream.title
 					this.data.livestreams.push(localLivestream)
@@ -214,7 +214,7 @@ export function initAPI() {
 			} else if (message.messageId === 'templateUpdate' || message._messageId === 'templateUpdate') {
 				this.data.templates = []
 				message.templates.forEach((template) => {
-					var localTemplate = {}
+					let localTemplate = {}
 					localTemplate.id = template.id
 					localTemplate.label = template.name
 					this.data.templates.push(localTemplate)

@@ -164,7 +164,7 @@ export function initPresets() {
 		],
 	}
 
-	var skipFeedbacks = []
+	let skipFeedbacks = []
 
 	skipFeedbacks.push({
 		feedbackId: 'skippableStatus',
@@ -258,7 +258,7 @@ export function initPresets() {
 		],
 	}
 
-	var breakingNewsFeedbacks = []
+	let breakingNewsFeedbacks = []
 
 	breakingNewsFeedbacks.push({
 		feedbackId: 'playbackStatus',
@@ -458,7 +458,7 @@ export function initPresets() {
 
 		this.data.livestreams
 			.map((live) => {
-				var liveFeedback = []
+				let liveFeedback = []
 
 				liveFeedback.push({
 					feedbackId: 'playbackStatus',
