@@ -18,7 +18,7 @@ export function updateVariables() {
 		return
 	}
 
-	var remainingAd = this.data.adRunning
+	let remainingAd = this.data.adRunning
 
 	if (remainingAd <= 0) {
 		remainingAd = '0'
@@ -55,7 +55,7 @@ function msToTime(duration) {
 		return '00:00:00'
 	}
 
-	var seconds = Math.floor((duration / 1000) % 60),
+	let seconds = Math.floor((duration / 1000) % 60),
 		minutes = Math.floor((duration / (1000 * 60)) % 60),
 		hours = Math.floor(duration / (1000 * 60 * 60))
 

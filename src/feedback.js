@@ -85,11 +85,11 @@ export function initFeedbacks() {
 			},
 		],
 		callback: ({ options }) => {
-			var actualSelectedTargets = options.targets.filter((target) => target !== 'select')
-			var someDisabled = this.data.targets
+			let actualSelectedTargets = options.targets.filter((target) => target !== 'select')
+			let someDisabled = this.data.targets
 				.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
 				.some((target) => !target.enabled)
-			var someProblem = this.data.targets
+			let someProblem = this.data.targets
 				.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
 				.some((target) => target.status != 2)
 

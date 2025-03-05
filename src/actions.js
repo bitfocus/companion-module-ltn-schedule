@@ -2,7 +2,7 @@ import got from 'got'
 import FormData from 'form-data'
 
 export function getActions() {
-	var skipOption = {}
+	let skipOption = {}
 	if (this.data.apiVersion > 0) {
 		skipOption = {
 			type: 'dropdown',
@@ -18,7 +18,7 @@ export function getActions() {
 		}
 	}
 
-	var breakingNewsOptions = []
+	let breakingNewsOptions = []
 	if (this.data.apiVersion > 2) {
 		breakingNewsOptions.push({
 			type: 'dropdown',
@@ -38,7 +38,7 @@ export function getActions() {
 		})
 	}
 
-	var actions = {
+	let actions = {
 		playback_toggle: {
 			name: 'Toggle playback running',
 			options: [
@@ -53,9 +53,9 @@ export function getActions() {
 				},
 			],
 			callback: async (event) => {
-				var opt = event.options
-				var cmd
-				var apiEndpoint
+				let opt = event.options
+				let cmd
+				let apiEndpoint
 
 				if (this.data.playoutRunning) {
 					apiEndpoint = 'playout/stop'
@@ -75,8 +75,8 @@ export function getActions() {
 			name: 'Toggle publishing',
 			options: [],
 			callback: async (event) => {
-				var cmd
-				var apiEndpoint
+				let cmd
+				let apiEndpoint
 
 				if (this.data.playoutRunning) {
 					if (this.data.publishRunning) {
@@ -105,12 +105,12 @@ export function getActions() {
 				},
 			],
 			callback: async (event) => {
-				var opt = event.options
-				var cmd
-				var apiEndpoint
+				let opt = event.options
+				let cmd
+				let apiEndpoint
 
-				var actualSelectedTargets = opt.targetsSelect.filter((target) => target !== 'select')
-				var someDisabled = this.data.targets
+				let actualSelectedTargets = opt.targetsSelect.filter((target) => target !== 'select')
+				let someDisabled = this.data.targets
 					.filter((target) => actualSelectedTargets.some((selected) => selected === target.id))
 					.some((target) => !target.enabled)
 
@@ -129,9 +129,9 @@ export function getActions() {
 			name: 'Skip a playback element',
 			options: [skipOption],
 			callback: async (event) => {
-				var opt = event.options
-				var cmd
-				var apiEndpoint
+				let opt = event.options
+				let cmd
+				let apiEndpoint
 
 				if (!this.data.skipUsed) {
 					apiEndpoint = 'playout/skip'
@@ -153,7 +153,7 @@ export function getActions() {
 		},
 	}
 
-	var adOptions = [
+	let adOptions = [
 		{
 			type: 'number',
 			label: 'Ad Length',
@@ -165,37 +165,36 @@ export function getActions() {
 			required: true,
 			range: false,
 		},
+		{
+			type: 'dropdown',
+			label: 'SCTE Trigger type',
+			id: 'triggerType',
+			tooltip: 'What type of SCTE35 trigger do you want to send?',
+			default: 'local',
+			choices: [
+				{
+					id: 'LOCAL',
+					label: 'Local',
+				},
+				{
+					id: 'NATIONAL',
+					label: 'National',
+				},
+			],
+			isVisibleData: this.data.apiVersion >= 6,
+			isVisible: (opt, data) => {
+				return data
+			}
+		}
 	]
-
-	if(this.data.apiVersion >= 6)
-	{
-		adOptions.push({
-				type: 'dropdown',
-				label: 'SCTE Trigger type',
-				id: 'triggerType',
-				tooltip: 'What type of SCTE35 trigger do you want to send?',
-				default: 'local',
-				choices: [
-					{
-						id: 'LOCAL',
-						label: 'Local',
-					},
-					{
-						id: 'NATIONAL',
-						label: 'National',
-					},
-				],
-		})
-	}
-
 
 	actions.playback_ad = {
 		name: 'Trigger an ad',
 		options: adOptions,
 		callback: async (event) => {
-			var opt = event.options
-			var cmd
-			var apiEndpoint
+			let opt = event.options
+			let cmd
+			let apiEndpoint
 
 			if (
 			this.data.adRunning == 0 &&
@@ -205,7 +204,7 @@ export function getActions() {
 				apiEndpoint = 'playout/ad'
 				cmd = '?adLength=' + opt.adLength
 			}
-			if(opt.triggerType)
+			if(opt.triggerType && this.data.apiVersion >= 6)
 			{
 				cmd = cmd + '&triggerType=' + opt.triggerType
 			}
@@ -219,9 +218,9 @@ export function getActions() {
 			name: 'Toggle breaking live',
 			options: [],
 			callback: async (event) => {
-				var opt = event.options
-				var cmd
-				var apiEndpoint
+				let opt = event.options
+				let cmd
+				let apiEndpoint
 
 				if (!this.data.breakingNewsRunning) {
 					apiEndpoint = 'breakinglive/start'
@@ -238,9 +237,9 @@ export function getActions() {
 			name: 'Toggle breaking live',
 			options: breakingNewsOptions,
 			callback: async (event) => {
-				var opt = event.options
-				var cmd
-				var apiEndpoint
+				let opt = event.options
+				let cmd
+				let apiEndpoint
 
 				if (this.data.bumperRunning && this.data.apiVersion >= 7) {
 					apiEndpoint = 'breakinglive/cancelbumper'
@@ -274,8 +273,8 @@ export function getActions() {
 			name: 'Cancel an ad',
 			options: [],
 			callback: async (event) => {
-				var cmd
-				var apiEndpoint
+				let cmd
+				let apiEndpoint
 
 				apiEndpoint = 'playout/cancelad'
 				cmd = ''
@@ -290,9 +289,9 @@ export function getActions() {
 			name: 'Toggle overlay',
 			options: [],
 			callback: async (event) => {
-				var cmd
-				var apiEndpoint
-				var type
+				let cmd
+				let apiEndpoint
+				let type
 
 				if (!this.data.overlayEnabled) {
 					apiEndpoint = 'overlay/static/activate'
@@ -320,9 +319,9 @@ export function getActions() {
 				},
 			],
 			callback: async (event) => {
-				var opt = event.options
-				var cmd
-				var apiEndpoint
+				let opt = event.options
+				let cmd
+				let apiEndpoint
 
 				if (!this.data.htmlOverlayEnabled) {
 					apiEndpoint = 'overlay/html/activate'
@@ -410,8 +409,8 @@ export function getActions() {
 				},
 			],
 			callback: async (event) => {
-				var opt = event.options
-				var cmd
+				let opt = event.options
+				let cmd
 
 				cmd =
 					'?id=' +
@@ -467,8 +466,8 @@ export function getActions() {
 			name: 'Resync systems',
 			options: [],
 			callback: async (event) => {
-				var cmd
-				var apiEndpoint
+				let cmd
+				let apiEndpoint
 
 				apiEndpoint = 'playout/resync'
 				cmd = ''
@@ -508,9 +507,9 @@ export function getActions() {
         }
 			],
 			callback: async (event) => {
-				var cmd = ''
-				var apiEndpoint
-				var opt = event.options
+				let cmd = ''
+				let apiEndpoint
+				let opt = event.options
 
 				apiEndpoint = 'playout/jump'
 				if (opt.id) {
@@ -537,8 +536,8 @@ export function getActions() {
       name: 'Toggle output scaling',
       options: [],
       callback: async (event) => {
-        var cmd
-        var apiEndpoint = 'playout/scaling/set'
+        let cmd
+        let apiEndpoint = 'playout/scaling/set'
 
           if (this.data.outputScalingEnabled) {
             cmd = '?enabled=false'
@@ -555,12 +554,12 @@ export function getActions() {
 
 function sendAction(apiEndpoint, cmd, callback, errorCallback, requestType) {
 	if (typeof cmd !== 'undefined' && typeof apiEndpoint !== 'undefined') {
-		var requestString =
+		let requestString =
 			`https://${this.config.username}:${this.config.password}@${this.config.host}/api/v1/${apiEndpoint}` + cmd
 		this.log('info', `request ${requestString}`)
-		var req
+		let req
 		if (requestType === 'POST') {
-			var formData = new FormData()
+			let formData = new FormData()
 			req = got.post(requestString, { body: formData })
 		} else {
 			req = got.get(requestString)
