@@ -16,11 +16,11 @@ More infos available on the LTN website: https://ltnglobal.com/
 To get a pair of credentials for the Schedule API, create a new user in the Schedule UI and assign
 the api user role to it. You can then use it to connect through this companion module.
 
-| Setting          | Description                                                     |
-|------------------|-----------------------------------------------------------------|
-| **Host**         | Enter the hostname of your Schedule instance.                   |
-| **API Username** | Enter the username of one of the Schedule instance's API Users. |
-| **API Password** | Enter the corresponding password.                               |
+| Setting          | Description                                                                         |
+|------------------|-------------------------------------------------------------------------------------|
+| **Host**         | Enter the hostname of your Schedule instance. (Can be a variable)                   |
+| **API Username** | Enter the username of one of the Schedule instance's API Users. (Can be a variable) |
+| **API Password** | Enter the corresponding password. (Can be a variable)                               |
 
 ## Actions
 
