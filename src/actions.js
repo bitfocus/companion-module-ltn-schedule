@@ -623,8 +623,59 @@ export function getActions() {
     }
 	}
 
+	actions.reconfigure_connection = {
+		name: 'Reconfigure connection',
+		description: 'Change the current connection configuration to connect to a different instance of Schedule and/or with different credentials',
+		options: [
+			{
+				type: 'textinput',
+				id: 'newHost',
+				label: 'New host',
+				tooltip: 'Leave blank to keep the same',
+				default: '',
+				useVariables: true,
+			},
+			{
+				type: 'textinput',
+				id: 'newUsername',
+				label: 'New API username',
+				tooltip: 'Leave blank to keep the same',
+				default: '',
+				useVariables: true,
+			},
+			{
+				type: 'textinput',
+				id: 'newPassword',
+				label: 'New API password',
+				tooltip: 'Leave blank to keep the same',
+				default: '',
+				useVariables: true,
+			},
+		],
+		callback: async (event) => {
+			const opt = event.options
+			
+			let newHost = opt.newHost
+			let newUsername = opt.newUsername
+			let newPassword = opt.newPassword
 
-		return actions
+			// compatibility with API 1.14 and below
+			if (typeof this.parseVariablesInString === 'function') {
+				newHost = await this.parseVariablesInString(newHost)
+				newUsername = await this.parseVariablesInString(newUsername)
+				newPassword = await this.parseVariablesInString(newPassword)
+			}
+
+			if (newHost !== '') this.config.host = newHost
+			if (newUsername !== '') this.config.username = newUsername
+			if (newPassword !== '') this.config.password = newPassword
+
+			this.saveConfig(this.config)
+			await this.configUpdated(this.config)
+		},
+	}
+
+	return actions
 }
 
 function sendAction(apiEndpoint, cmd, callback, errorCallback, requestType) {

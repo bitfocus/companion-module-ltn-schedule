@@ -254,12 +254,12 @@ export function initAPI() {
 			}
 		})
 
-		this.socket.on('onclose', () => {
+		this.socket.on('close', () => {
 			this.log('info', 'Server might have restarted')
 		})
 
-		this.socket.on('onerror', (err) => {
-			this.updateStatusstatus('unknown_error', err)
+		this.socket.on('error', (err) => {
+			this.updateStatus('unknown_error', err)
 			this.log('info', 'Schedule Websocket API err:' + JSON.stringify(err))
 		})
 	}
