@@ -623,6 +623,20 @@ export function getActions() {
     }
 	}
 
+  if (this.data.apiVersion >= 10)
+  {
+    actions.stopAllGraphics = {
+      name: 'Clear graphics engine',
+      options: [],
+      callback: async (event) => {
+        let cmd
+        let apiEndpoint = 'graphics/clearAll'
+
+        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
+      },
+    }
+  }
+
 	actions.reconfigure_connection = {
 		name: 'Reconfigure connection',
 		description: 'Change the current connection configuration to connect to a different instance of Schedule and/or with different credentials',
