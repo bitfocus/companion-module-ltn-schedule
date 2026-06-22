@@ -68,6 +68,8 @@ export function initAPI() {
 						this.data.apiVersion = 8
 					} else if (message.apiVersion === '9') {
 						this.data.apiVersion = 9
+          } else if (message.apiVersion === '10') {
+						this.data.apiVersion = 10
 					} else if (typeof message.apiVersion !== 'undefined') {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
 					} else {
