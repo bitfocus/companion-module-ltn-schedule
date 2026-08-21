@@ -519,5 +519,21 @@ export function initFeedbacks() {
 		}
 	}
 
+	if (this.data.apiVersion >= 11) {
+
+    feedbacks.pgmRecordingStatus = {
+      type: 'boolean',
+      name: 'PGM Recording status',
+      description: 'Indicates if PGM recording is running',
+      defaultStyle: {
+        bgcolor: green,
+      },
+      options: [],
+      callback: ({ options }) => {
+        return this.data.pgmRecordingStartStamp > 0
+      },
+    }
+	}
+
 		return feedbacks
 }

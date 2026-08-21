@@ -45,6 +45,9 @@ the api user role to it. You can then use it to connect through this companion m
 | **Stop graphics**           | Stop all graphics engine layers                                                                                                                      |
 | **Start graphics**          | Start all graphics engine layers                                                                                                                     |
 | **Reconfigure connection**  | Update the module connection configuration to switch to a different Schedule instance / credentials                                                  |
+| **Start PGM recording**     | Starts the PGM recording if possible                                                                                                                 |
+| **Stop PGM recording**      | Stops the PGM recording if it is running                                                                                                             |
+| **Toggle PGM recording**    | Toggles the state of PGM recording if it is currently possible                                                                                       |
 
 ## Feedback available
 
@@ -67,19 +70,21 @@ the api user role to it. You can then use it to connect through this companion m
 | **Flexible playback status**        | Shows if flexible playback mode is activated                                                         |
 | **Output scaling status**           | Shows if output scaling is activated                                                                 |
 | **Graphics layer status**           | Shows if a graphics layer is on air                                                                  |
+| **PGM Recording status**            | Shows if PGM recording is running                                                                    |
 
 ## Variables
 
-| Variable                 | Description                                                                                        |
-|--------------------------|----------------------------------------------------------------------------------------------------|
-| **currentRemainingTime** | Shows a timer with the remaining time for the current element                                      |
-| **totalPlayedTime**      | Shows a timer with the total played time of the rundown                                            |
-| **totalRemainingTime**   | Shows a timer with the total remaining time of the rundown                                         |
-| **totalDuration**        | Shows the total duration of the rundown                                                            |
-| **adRemainingTime**      | Shows a timer with the remaining time of the current longest ad break, or empty if none is running |
-| **elementRunning**       | Shows the ID of the current element running                                                        |
-| **elementRunningIndex**  | Shows the index of the current element running                                                     |
-| **currentPlayedTime**    | Shows the played time of the current element                                                       |
+| Variable                    | Description                                                                                        |
+|-----------------------------|----------------------------------------------------------------------------------------------------|
+| **currentRemainingTime**    | Shows a timer with the remaining time for the current element                                      |
+| **totalPlayedTime**         | Shows a timer with the total played time of the rundown                                            |
+| **totalRemainingTime**      | Shows a timer with the total remaining time of the rundown                                         |
+| **totalDuration**           | Shows the total duration of the rundown                                                            |
+| **adRemainingTime**         | Shows a timer with the remaining time of the current longest ad break, or empty if none is running |
+| **elementRunning**          | Shows the ID of the current element running                                                        |
+| **elementRunningIndex**     | Shows the index of the current element running                                                     |
+| **currentPlayedTime**       | Shows the played time of the current element                                                       |
+| **currentPgmRecordingTime** | Shows the current runtime of the PGM recording                                                     |
 
 ## Presets
 
@@ -90,3 +95,4 @@ the api user role to it. You can then use it to connect through this companion m
 - Presets for variable timers are created
 - A preset for jumping to an element
 - A preset for output scaling button
+- A preset for toggling/starting/stopping PGM recording

@@ -70,6 +70,8 @@ export function initAPI() {
 						this.data.apiVersion = 9
           } else if (message.apiVersion === '10') {
 						this.data.apiVersion = 10
+          } else if (message.apiVersion === '11') {
+						this.data.apiVersion = 11
 					} else if (typeof message.apiVersion !== 'undefined') {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
 					} else {
@@ -123,6 +125,10 @@ export function initAPI() {
         }
         if(this.data.apiVersion >= 10) {
           this.data.currentStartstamp = message.currentElementStart
+        }
+        if(this.data.apiVersion >= 11) {
+          this.data.pgmRecordingStartStamp = message.pgmRecordingStartStamp
+          this.checkFeedbacks('pgmRecordingStatus')
         }
 			} else if (message.messageId === 'playout_update' || message._messageId === 'playout_update') {
 				if (this.data.apiVersion > 0) {
