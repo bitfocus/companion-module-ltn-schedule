@@ -114,12 +114,16 @@ export function initAPI() {
 				this.checkFeedbacks('overlayStatus', 'htmlOverlayStatus', 'breakingNewsStatus', 'breakingLiveLivestreamStatus')
 				this.updatePresets()
 			} else if (
-				(message.messageId === 'statusUpdate' || message._messageId === 'statusUpdate') &&
-				this.data.apiVersion >= 7
-			) {
-				this.data.startstamp = message.startStamp
-				this.data.playlistLength = message.playoutListLengthMs
-				this.data.currentEndstamp = message.currentElementEnd
+				(message.messageId === 'statusUpdate' || message._messageId === 'statusUpdate')
+      ) {
+        if(this.data.apiVersion >= 7) {
+          this.data.startstamp = message.startStamp
+          this.data.playlistLength = message.playoutListLengthMs
+          this.data.currentEndstamp = message.currentElementEnd
+        }
+        if(this.data.apiVersion >= 10) {
+          this.data.currentStartstamp = message.currentElementStart
+        }
 			} else if (message.messageId === 'playout_update' || message._messageId === 'playout_update') {
 				if (this.data.apiVersion > 0) {
 					this.data.playoutRunning = message.activated

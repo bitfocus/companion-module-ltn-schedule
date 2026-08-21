@@ -72,6 +72,7 @@ class LTNScheduleInstance extends InstanceBase {
 			startstamp: 0,
 			playlistLength: 0,
 			currentEndstamp: 0,
+			currentStartstamp: 0,
 			flexiblePlaybackEnabled: false,
 			outputScalingEnabled: false,
 			elementRunning: '',
