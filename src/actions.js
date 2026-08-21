@@ -637,6 +637,52 @@ export function getActions() {
     }
   }
 
+  if (this.data.apiVersion >= 11)
+  {
+    actions.setPGMRecording = {
+      name: 'Set PGM recording',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Status',
+          id: 'status',
+          tooltip: 'What is the desired status?',
+          default: 'toggle',
+          choices: [
+            {
+              id: 'toggle',
+              label: 'Toggle',
+            },
+            {
+              id: 'start',
+              label: 'Start',
+            },
+            {
+              id: 'stop',
+              label: 'Stop',
+            },
+          ],
+        },
+      ],
+      callback: async (event) => {
+        let cmd
+        let apiEndpoint
+        let opt = event.options
+
+        if (opt.status === 'start') {
+          let apiEndpoint = 'pgm-recording/start'
+        } else if (opt.status === 'stop'){
+          let apiEndpoint = 'pgm-recording/stop'
+        } else if (this.data.pgmRecordingStartStamp > 0) {
+          let apiEndpoint = 'pgm-recording/stop'
+        } else {
+          let apiEndpoint = 'pgm-recording/start'
+        }
+        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
+      },
+    }
+  }
+
 	actions.reconfigure_connection = {
 		name: 'Reconfigure connection',
 		description: 'Change the current connection configuration to connect to a different instance of Schedule and/or with different credentials',
