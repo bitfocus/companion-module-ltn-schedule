@@ -1,9 +1,4 @@
-import {
-	CreateConvertToBooleanFeedbackUpgradeScript,
-	InstanceBase,
-	runEntrypoint,
-	combineRgb,
-} from '@companion-module/base'
+const {CreateConvertToBooleanFeedbackUpgradeScript, InstanceBase, runEntrypoint, combineRgb,} = require('@companion-module/base')
 
 import { getActions } from './src/actions.js'
 import { initAPI } from './src/api.js'
