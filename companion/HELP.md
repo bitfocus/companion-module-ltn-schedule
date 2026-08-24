@@ -45,9 +45,7 @@ the api user role to it. You can then use it to connect through this companion m
 | **Stop graphics**           | Stop all graphics engine layers                                                                                                                      |
 | **Start graphics**          | Start all graphics engine layers                                                                                                                     |
 | **Reconfigure connection**  | Update the module connection configuration to switch to a different Schedule instance / credentials                                                  |
-| **Start PGM recording**     | Starts the PGM recording if possible                                                                                                                 |
-| **Stop PGM recording**      | Stops the PGM recording if it is running                                                                                                             |
-| **Toggle PGM recording**    | Toggles the state of PGM recording if it is currently possible                                                                                       |
+| **Set PGM recording**       | Sets the status of the PGM recording if possible (Start, Stop or Toggle)                                                                             | |
 
 ## Feedback available
 
