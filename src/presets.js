@@ -833,6 +833,97 @@ export function initPresets() {
     }
   }
 
+  if(this.data.apiVersion >= 11)
+  {
+    presets.toggle_pgm_recording = {
+      category: 'Recording',
+      type: 'button',
+      name: `Toggle PGM Recording`,
+      options: {},
+      style: {
+        text: `PGM Recording runtime\n$(generic-module:currentPgmRecordingTime)`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'setPGMRecording',
+              options: {
+                status: 'toggle'
+              },
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [
+        {
+          feedbackId: 'pgmRecordingStatus',
+          style: {
+            bgcolor: red,
+          },
+        },
+      ],
+    }
+
+    presets.stop_pgm_recording = {
+      category: 'Recording',
+      type: 'button',
+      name: `Stop PGM Recording`,
+      options: {},
+      style: {
+        text: `Stop PGM Recording`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'setPGMRecording',
+              options: {
+                status: 'stop'
+              },
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
+    presets.start_pgm_recording = {
+      category: 'Recording',
+      type: 'button',
+      name: `Start PGM Recording`,
+      options: {},
+      style: {
+        text: `Start PGM Recording`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'setPGMRecording',
+              options: {
+                status: 'start'
+              },
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+  }
+
 	this.setPresetDefinitions(presets)
 
 

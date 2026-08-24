@@ -8,6 +8,7 @@ export function updateVariableDefinitions() {
     { variableId: 'elementRunning', name: 'ID of the current running element' },
     { variableId: 'elementRunningIndex', name: 'Index of the current running element' },
     { variableId: 'currentPlayedTime', name: 'Played time of the current playing element' },
+    { variableId: 'currentPgmRecordingTime', name: 'Current running time of the PGM recording' },
 
 	]
 
@@ -38,6 +39,11 @@ export function updateVariables() {
       elementRunning: this.data.elementRunning,
       elementRunningIndex: this.data.elementRunningIndex,
       currentPlayedTime: msToTime(now - this.data.currentStartstamp),
+      currentPgmRecordingTime: msToTime(
+          this.data.pgmRecordingStartStamp <= 0
+              ? -1
+              : now - this.data.pgmRecordingStartStamp
+      ),
     })
 	} else {
 		this.setVariableValues({
@@ -49,6 +55,7 @@ export function updateVariables() {
       elementRunning: '',
       elementRunningIndex: 0,
       currentPlayedTime: msToTime(-1),
+      currentPgmRecordingTime: msToTime(-1),
     })
 	}
 }
