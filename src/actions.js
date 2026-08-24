@@ -665,18 +665,18 @@ export function getActions() {
         },
       ],
       callback: async (event) => {
-        let cmd
+        let cmd = ''
         let apiEndpoint
         let opt = event.options
 
         if (opt.status === 'start') {
-          let apiEndpoint = 'pgm-recording/start'
+          apiEndpoint = 'pgm-recording/start'
         } else if (opt.status === 'stop'){
-          let apiEndpoint = 'pgm-recording/stop'
+          apiEndpoint = 'pgm-recording/stop'
         } else if (this.data.pgmRecordingStartStamp > 0) {
-          let apiEndpoint = 'pgm-recording/stop'
+          apiEndpoint = 'pgm-recording/stop'
         } else {
-          let apiEndpoint = 'pgm-recording/start'
+          apiEndpoint = 'pgm-recording/start'
         }
         sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
       },

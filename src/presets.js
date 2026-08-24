@@ -841,9 +841,9 @@ export function initPresets() {
       name: `Toggle PGM Recording`,
       options: {},
       style: {
-        text: `PGM Recording runtime\n$(generic-module:currentPlayedTime)`,
+        text: `PGM Recording runtime\n$(generic-module:currentPgmRecordingTime)`,
         size: 11,
-        color: red,
+        color: '16777215',
         bgcolor: darkGrey,
       },
       steps: [
@@ -877,7 +877,7 @@ export function initPresets() {
       style: {
         text: `Stop PGM Recording`,
         size: 11,
-        color: red,
+        color: '16777215',
         bgcolor: darkGrey,
       },
       steps: [
@@ -904,7 +904,7 @@ export function initPresets() {
       style: {
         text: `Start PGM Recording`,
         size: 11,
-        color: red,
+        color: '16777215',
         bgcolor: darkGrey,
       },
       steps: [
