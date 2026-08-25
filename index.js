@@ -1,4 +1,4 @@
-const {CreateConvertToBooleanFeedbackUpgradeScript, InstanceBase, runEntrypoint, combineRgb,} = require('@companion-module/base')
+import {CreateConvertToBooleanFeedbackUpgradeScript, InstanceBase, combineRgb,} from '@companion-module/base'
 
 import { getActions } from './src/actions.js'
 import { initAPI } from './src/api.js'
@@ -175,8 +175,11 @@ class LTNScheduleInstance extends InstanceBase {
 	}
 }
 
-runEntrypoint(LTNScheduleInstance, [
-	CreateConvertToBooleanFeedbackUpgradeScript({
-		playbackStatus: true,
-	}),
-])
+export const UpgradeScripts = [
+  CreateConvertToBooleanFeedbackUpgradeScript({
+    playbackStatus: true,
+  }),
+]
+
+
+export default LTNScheduleInstance
