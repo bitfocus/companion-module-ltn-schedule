@@ -48,7 +48,7 @@ export function getActions() {
 					id: 'startstamp',
 					tooltip: 'Sets the start timestamp (in milliseconds) (optional)',
 					min: 0,
-					required: false,
+          requiredExpression: false,
 					range: false,
 				},
 			],
@@ -162,7 +162,7 @@ export function getActions() {
 			min: 0,
 			max: 3600,
 			default: 0,
-			required: true,
+      requiredExpression: true,
 			range: false,
 		},
 		{
@@ -182,7 +182,7 @@ export function getActions() {
 				},
 			],
 			isVisibleData: this.data.apiVersion >= 6,
-			isVisible: (opt, data) => {
+      isVisibleExpression: (opt, data) => {
 				return data
 			}
 		}
