@@ -625,7 +625,7 @@ export function getActions() {
 
   if (this.data.apiVersion >= 10)
   {
-    actions.stopAllGraphics = {
+    actions.clearAllGraphics = {
       name: 'Clear graphics engine',
       options: [],
       callback: async (event) => {

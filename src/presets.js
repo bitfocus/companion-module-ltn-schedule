@@ -908,7 +908,7 @@ export function initPresets() {
       name: `Stop all layers`,
       options: {},
       style: {
-        text: `Stop GFX`,
+        text: `Stop GFX layers`,
         size: 11,
         color: '16777215',
         bgcolor: darkGrey,
@@ -927,12 +927,60 @@ export function initPresets() {
       feedbacks: [],
     }
 
+    presets.clear_all_layers = {
+      type: 'simple',
+      name: `Clear all layers`,
+      options: {},
+      style: {
+        text: `Clear GFX layers`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'clearAllGraphics',
+              options: {},
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
+    presets.start_all_layers = {
+      type: 'simple',
+      name: `Start all layers`,
+      options: {},
+      style: {
+        text: `Start GFX layers`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'startAllGraphics',
+              options: {},
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
     graphicsGroups.push({
       id: 'graphics-controls',
       type: 'simple',
       name: 'Graphics Controls',
       description: 'General graphics engine control',
-      presets: ['stop_all_layers'],
+      presets: ['stop_all_layers', 'clear_all_layers', 'start_all_layers'],
     })
   }
 

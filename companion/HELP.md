@@ -93,4 +93,6 @@ the api user role to it. You can then use it to connect through this companion m
 - Presets for variable timers are created
 - A preset for jumping to an element
 - A preset for output scaling button
+- A preset for toggling the state of each graphics layer
+- A preset for start/stop/clear of all graphics layers
 - A preset for toggling/starting/stopping PGM recording
