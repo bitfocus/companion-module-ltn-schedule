@@ -818,6 +818,14 @@ export function initPresets() {
     }
   }
 
+  const graphicsGroups = []
+  const graphics = {
+    id: 'section-graphics',
+    name: 'Graphics',
+    description: 'Toggle graphics engine layers',
+    definitions: graphicsGroups,
+  }
+
   if (this.data.apiVersion >= 9) {
     this.data.graphicsRundown
     .map((element) => {
@@ -862,12 +870,15 @@ export function initPresets() {
     .forEach((element) => {
       presets["graphics-rundown-" + element.id] = element
     })
-    structure.push({
-      id: 'section-graphics',
-      name: 'Graphics',
-      description: 'Toggle graphics engine layers',
-      definitions: this.data.graphicsRundown.map(
-          (element) => "graphics-rundown-" + element.id),
+
+    structure.push(graphics)
+
+    graphicsGroups.push({
+      id: 'graphics-layers',
+      type: 'simple',
+      name: 'Graphics Layers',
+      description: 'Individual layer control',
+      presets: this.data.graphicsRundown.map((element) => "graphics-rundown-" + element.id),
     })
   }
 
@@ -891,6 +902,38 @@ export function initPresets() {
       ],
       feedbacks: [],
     }
+
+    presets.stop_all_layers = {
+      type: 'simple',
+      name: `Stop all layers`,
+      options: {},
+      style: {
+        text: `Stop GFX`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'stopAllGraphics',
+              options: {},
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
+    graphicsGroups.push({
+      id: 'graphics-controls',
+      type: 'simple',
+      name: 'Graphics Controls',
+      description: 'General graphics engine control',
+      presets: ['stop_all_layers'],
+    })
   }
 
   if (this.data.apiVersion >= 11) {
