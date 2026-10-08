@@ -9,6 +9,7 @@ export function updateVariableDefinitions() {
     elementRunningIndex: {name: 'Index of the current running element'},
     currentPlayedTime: {name: 'Played time of the current playing element'},
     currentPgmRecordingTime: {name: 'Current running time of the PGM recording'},
+    upcomingStartTime: {name: 'Start time of the upcoming element'},
 
 }
 
@@ -44,7 +45,11 @@ export function updateVariableDefinitions() {
           this.data.pgmRecordingStartStamp <= 0
               ? -1
               : now - this.data.pgmRecordingStartStamp
-      ),})
+      ),
+      upcomingStartTime: this.data.apiVersion >= 11 && this.data.upcomingElementId
+          ? timestampToTime(this.data.currentEndstamp)
+          : timestampToTime(-1),
+      })
     } else {
       this.setVariableValues({
         totalRemainingTime: msToTime(
@@ -57,8 +62,26 @@ export function updateVariableDefinitions() {
         elementRunningIndex: 0,
         currentPlayedTime: msToTime(-1),
       currentPgmRecordingTime:msToTime(-1),
+      upcomingStartTime: timestampToTime(-1),
       })
     }
+  }
+
+  function timestampToTime(timestamp) {
+    if (!timestamp || timestamp <= 0) {
+      return '--:--:--'
+    }
+
+    const date = new Date(timestamp)
+    let hours = date.getHours(),
+        minutes = date.getMinutes(),
+        seconds = date.getSeconds()
+
+    hours = hours < 10 ? '0' + hours : hours
+    minutes = minutes < 10 ? '0' + minutes : minutes
+    seconds = seconds < 10 ? '0' + seconds : seconds
+
+    return hours + ':' + minutes + ':' + seconds
   }
 
   function msToTime(duration) {

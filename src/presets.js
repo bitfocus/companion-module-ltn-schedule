@@ -908,7 +908,7 @@ export function initPresets() {
       name: `Stop all layers`,
       options: {},
       style: {
-        text: `Stop GFX layers`,
+        text: `Stop all GFX layers`,
         size: 11,
         color: '16777215',
         bgcolor: darkGrey,
@@ -932,7 +932,7 @@ export function initPresets() {
       name: `Clear all layers`,
       options: {},
       style: {
-        text: `Clear GFX layers`,
+        text: `Clear all GFX layers`,
         size: 11,
         color: '16777215',
         bgcolor: darkGrey,
@@ -956,7 +956,7 @@ export function initPresets() {
       name: `Start all layers`,
       options: {},
       style: {
-        text: `Start GFX layers`,
+        text: `Start all GFX layers`,
         size: 11,
         color: '16777215',
         bgcolor: darkGrey,
@@ -985,6 +985,26 @@ export function initPresets() {
   }
 
   if (this.data.apiVersion >= 11) {
+    timers.push('upcoming_start_time')
+    presets.upcoming_start_time = {
+      type: 'simple',
+      name: `Upcoming Element Start Time`,
+      options: {},
+      style: {
+        text: `Next starts at\n$(generic-module:upcomingStartTime)`,
+        size: 11,
+        color: yellow,
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
     presets.toggle_pgm_recording = {
       type: 'simple',
       name: `Toggle PGM Recording`,
