@@ -41,11 +41,12 @@ the api user role to it. You can then use it to connect through this companion m
 | **Resync system**           | Attempts re-syncing with the redundant system                                                                                                        |
 | **Jump to element**         | Jump to an element by ID, index, title, or custom key and value pair                                                                                 |
 | **Toggle output scaling**   | Activate or deactivate the currently set output scaling settings                                                                                     |
-| **Change graphics layer**   | Activate, deactivate or toggler a graphics engine rundown element                                                                                    |
+| **Change graphics layer**   | Activate, deactivate or toggle a graphics engine rundown element                                                                                     |
 | **Stop graphics**           | Stop all graphics engine layers                                                                                                                      |
+| **Clear graphics**          | Clear all graphics engine layers                                                                                                                     |
 | **Start graphics**          | Start all graphics engine layers                                                                                                                     |
 | **Reconfigure connection**  | Update the module connection configuration to switch to a different Schedule instance / credentials                                                  |
-| **Set PGM recording**       | Sets the status of the PGM recording if possible (Start, Stop or Toggle)                                                                             | |
+| **Set PGM recording**       | Sets the status of the PGM recording if possible (Start, Stop or Toggle)                                                                             |
 
 ## Feedback available
 
@@ -83,6 +84,7 @@ the api user role to it. You can then use it to connect through this companion m
 | **elementRunningIndex**     | Shows the index of the current element running                                                     |
 | **currentPlayedTime**       | Shows the played time of the current element                                                       |
 | **currentPgmRecordingTime** | Shows the current runtime of the PGM recording                                                     |
+| **upcomingStartTime**       | Shows the start time (HH:MM:SS) of the upcoming element, or `--:--:--` if there is none            |
 
 ## Presets
 
@@ -93,4 +95,6 @@ the api user role to it. You can then use it to connect through this companion m
 - Presets for variable timers are created
 - A preset for jumping to an element
 - A preset for output scaling button
+- A preset for toggling the state of each graphics layer
+- A preset for start/stop/clear of all graphics layers
 - A preset for toggling/starting/stopping PGM recording

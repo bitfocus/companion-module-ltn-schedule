@@ -818,6 +818,14 @@ export function initPresets() {
     }
   }
 
+  const graphicsGroups = []
+  const graphics = {
+    id: 'section-graphics',
+    name: 'Graphics',
+    description: 'Toggle graphics engine layers',
+    definitions: graphicsGroups,
+  }
+
   if (this.data.apiVersion >= 9) {
     this.data.graphicsRundown
     .map((element) => {
@@ -862,12 +870,15 @@ export function initPresets() {
     .forEach((element) => {
       presets["graphics-rundown-" + element.id] = element
     })
-    structure.push({
-      id: 'section-graphics',
-      name: 'Graphics',
-      description: 'Toggle graphics engine layers',
-      definitions: this.data.graphicsRundown.map(
-          (element) => "graphics-rundown-" + element.id),
+
+    structure.push(graphics)
+
+    graphicsGroups.push({
+      id: 'graphics-layers',
+      type: 'simple',
+      name: 'Graphics Layers',
+      description: 'Individual layer control',
+      presets: this.data.graphicsRundown.map((element) => "graphics-rundown-" + element.id),
     })
   }
 
@@ -891,9 +902,109 @@ export function initPresets() {
       ],
       feedbacks: [],
     }
+
+    presets.stop_all_layers = {
+      type: 'simple',
+      name: `Stop all layers`,
+      options: {},
+      style: {
+        text: `Stop all GFX layers`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'stopAllGraphics',
+              options: {},
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
+    presets.clear_all_layers = {
+      type: 'simple',
+      name: `Clear all layers`,
+      options: {},
+      style: {
+        text: `Clear all GFX layers`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'clearAllGraphics',
+              options: {},
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
+    presets.start_all_layers = {
+      type: 'simple',
+      name: `Start all layers`,
+      options: {},
+      style: {
+        text: `Start all GFX layers`,
+        size: 11,
+        color: '16777215',
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [
+            {
+              actionId: 'startAllGraphics',
+              options: {},
+            },
+          ],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
+    graphicsGroups.push({
+      id: 'graphics-controls',
+      type: 'simple',
+      name: 'Graphics Controls',
+      description: 'General graphics engine control',
+      presets: ['stop_all_layers', 'clear_all_layers', 'start_all_layers'],
+    })
   }
 
   if (this.data.apiVersion >= 11) {
+    timers.push('upcoming_start_time')
+    presets.upcoming_start_time = {
+      type: 'simple',
+      name: `Upcoming Element Start Time`,
+      options: {},
+      style: {
+        text: `Next starts at\n$(generic-module:upcomingStartTime)`,
+        size: 11,
+        color: yellow,
+        bgcolor: darkGrey,
+      },
+      steps: [
+        {
+          down: [],
+          up: [],
+        },
+      ],
+      feedbacks: [],
+    }
+
     presets.toggle_pgm_recording = {
       type: 'simple',
       name: `Toggle PGM Recording`,
