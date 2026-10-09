@@ -1,4 +1,4 @@
-import {CreateConvertToBooleanFeedbackUpgradeScript, InstanceBase, combineRgb,} from '@companion-module/base'
+import { CreateConvertToBooleanFeedbackUpgradeScript, InstanceBase, combineRgb } from '@companion-module/base'
 
 import { getActions } from './src/actions.js'
 import { initAPI } from './src/api.js'
@@ -68,7 +68,7 @@ class LTNScheduleInstance extends InstanceBase {
 			playlistLength: 0,
 			currentEndstamp: 0,
 			currentStartstamp: 0,
-      pgmRecordingStartStamp: 0,
+			pgmRecordingStartStamp: 0,
 			flexiblePlaybackEnabled: false,
 			outputScalingEnabled: false,
 			elementRunning: '',
@@ -79,12 +79,11 @@ class LTNScheduleInstance extends InstanceBase {
 					label: 'fill',
 					status: false,
 				},
-			]
+			],
 		}
 	}
 
 	async init(config) {
-		
 		this.config = config
 		this.config.host = config.host || ''
 		this.config.username = config.username
@@ -108,7 +107,6 @@ class LTNScheduleInstance extends InstanceBase {
 
 	// New config saved
 	async configUpdated(config) {
-
 		this.config = config
 		this.config.host = config.host || ''
 		this.config.username = config.username
@@ -176,10 +174,9 @@ class LTNScheduleInstance extends InstanceBase {
 }
 
 export const UpgradeScripts = [
-  CreateConvertToBooleanFeedbackUpgradeScript({
-    playbackStatus: true,
-  }),
+	CreateConvertToBooleanFeedbackUpgradeScript({
+		playbackStatus: true,
+	}),
 ]
-
 
 export default LTNScheduleInstance

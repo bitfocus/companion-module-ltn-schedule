@@ -39,7 +39,7 @@ export function initAPI() {
 					apiSocketMessageId: 'api_authenticate',
 					username: this.config.username,
 					password: this.config.password,
-				})
+				}),
 			)
 		})
 
@@ -68,9 +68,9 @@ export function initAPI() {
 						this.data.apiVersion = 8
 					} else if (message.apiVersion === '9') {
 						this.data.apiVersion = 9
-          } else if (message.apiVersion === '10') {
+					} else if (message.apiVersion === '10') {
 						this.data.apiVersion = 10
-          } else if (message.apiVersion === '11') {
+					} else if (message.apiVersion === '11') {
 						this.data.apiVersion = 11
 					} else if (typeof message.apiVersion !== 'undefined') {
 						this.data.apiVersion = Number.parseInt(message.apiVersion)
@@ -107,29 +107,26 @@ export function initAPI() {
 						this.data.breakingNewsCurrentId = message.playoutSettings.breakingLiveLivestreamId
 					}
 				}
-				if (this.data.apiVersion >= 8)
-				{
+				if (this.data.apiVersion >= 8) {
 					this.data.flexiblePlaybackEnabled = message.playoutSettings.flexiblePlaybackEnabled
 					this.data.outputScalingEnabled = message.playoutSettings.outputScalingSettings.enabled
 					this.checkFeedbacks('flexiblePlaybackStatus', 'outputScalingStatus')
 				}
 				this.checkFeedbacks('overlayStatus', 'htmlOverlayStatus', 'breakingNewsStatus', 'breakingLiveLivestreamStatus')
 				this.updatePresets()
-			} else if (
-				(message.messageId === 'statusUpdate' || message._messageId === 'statusUpdate')
-      ) {
-        if(this.data.apiVersion >= 7) {
-          this.data.startstamp = message.startStamp
-          this.data.playlistLength = message.playoutListLengthMs
-          this.data.currentEndstamp = message.currentElementEnd
-        }
-        if(this.data.apiVersion >= 10) {
-          this.data.currentStartstamp = message.currentElementStart
-        }
-        if(this.data.apiVersion >= 11) {
-          this.data.pgmRecordingStartStamp = message.pgmRecordingStartStamp
-          this.checkFeedbacks('pgmRecordingStatus')
-        }
+			} else if (message.messageId === 'statusUpdate' || message._messageId === 'statusUpdate') {
+				if (this.data.apiVersion >= 7) {
+					this.data.startstamp = message.startStamp
+					this.data.playlistLength = message.playoutListLengthMs
+					this.data.currentEndstamp = message.currentElementEnd
+				}
+				if (this.data.apiVersion >= 10) {
+					this.data.currentStartstamp = message.currentElementStart
+				}
+				if (this.data.apiVersion >= 11) {
+					this.data.pgmRecordingStartStamp = message.pgmRecordingStartStamp
+					this.checkFeedbacks('pgmRecordingStatus')
+				}
 			} else if (message.messageId === 'playout_update' || message._messageId === 'playout_update') {
 				if (this.data.apiVersion > 0) {
 					this.data.playoutRunning = message.activated
@@ -164,16 +161,20 @@ export function initAPI() {
 					this.checkFeedbacks('nextElementCaching', 'nextElementUnavailable')
 				}
 				this.data.elementRunningIndex = message.playoutItemIndex
-				if (this.data.apiVersion >= 8 && message.currentPlayoutItems !== 'undefined')
-				{
+				if (this.data.apiVersion >= 8 && message.currentPlayoutItems !== 'undefined') {
 					this.data.elementRunning = message.currentPlayoutItems.current[0]
-				}
-				else
-				{
-					this.data.elementRunning = '';
+				} else {
+					this.data.elementRunning = ''
 				}
 
-				this.checkFeedbacks('playbackStatus', 'publishStatus', 'skippableStatus', 'adTriggerStatus', 'targetsStatus', 'playedElementStatus')
+				this.checkFeedbacks(
+					'playbackStatus',
+					'publishStatus',
+					'skippableStatus',
+					'adTriggerStatus',
+					'targetsStatus',
+					'playedElementStatus',
+				)
 
 				if (this.data.apiVersion > 1) {
 					this.checkFeedbacks('breakingNewsStatus')
@@ -244,9 +245,7 @@ export function initAPI() {
 					this.data.elementsStatuses[statusInfo.playlistId] = statusInfo.livestreamInfo.livestreamStatus
 				})
 				this.checkFeedbacks('nextElementCaching', 'nextElementUnavailable')
-			} else if (message.messageId === 'graphics_status_get')
-			{
-
+			} else if (message.messageId === 'graphics_status_get') {
 				if (this.data.apiVersion >= 9) {
 					this.data.graphicsRundown = []
 
@@ -262,7 +261,6 @@ export function initAPI() {
 					this.updatePresets()
 					this.checkFeedbacks('graphicsStatus')
 				}
-
 			}
 		})
 

@@ -48,7 +48,6 @@ export function getActions() {
 					id: 'startstamp',
 					tooltip: 'Sets the start timestamp (in milliseconds) (optional)',
 					min: 0,
-          requiredExpression: false,
 					range: false,
 				},
 			],
@@ -162,15 +161,17 @@ export function getActions() {
 			min: 0,
 			max: 3600,
 			default: 0,
-      requiredExpression: true,
 			range: false,
 		},
-		{
+	]
+
+	if (this.data.apiVersion >= 6) {
+		adOptions.push({
 			type: 'dropdown',
 			label: 'SCTE Trigger type',
 			id: 'triggerType',
 			tooltip: 'What type of SCTE35 trigger do you want to send?',
-			default: 'local',
+			default: 'LOCAL',
 			choices: [
 				{
 					id: 'LOCAL',
@@ -181,12 +182,8 @@ export function getActions() {
 					label: 'National',
 				},
 			],
-			isVisibleData: this.data.apiVersion >= 6,
-      isVisibleExpression: (opt, data) => {
-				return data
-			}
-		}
-	]
+		})
+	}
 
 	actions.playback_ad = {
 		name: 'Trigger an ad',
@@ -197,15 +194,14 @@ export function getActions() {
 			let apiEndpoint
 
 			if (
-			this.data.adRunning == 0 &&
-			this.data.playoutRunning &&
-			(this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)
+				this.data.adRunning == 0 &&
+				this.data.playoutRunning &&
+				(this.data.currentItemType === 'livestream' || this.data.apiVersion > 3)
 			) {
 				apiEndpoint = 'playout/ad'
 				cmd = '?adLength=' + opt.adLength
 			}
-			if(opt.triggerType && this.data.apiVersion >= 6)
-			{
+			if (opt.triggerType && this.data.apiVersion >= 6) {
 				cmd = cmd + '&triggerType=' + opt.triggerType
 			}
 
@@ -455,7 +451,7 @@ export function getActions() {
 							this.checkFeedbacks('templateInsertStatus')
 						}, 1000)
 					},
-					'POST'
+					'POST',
 				)
 			},
 		}
@@ -490,7 +486,8 @@ export function getActions() {
 					id: 'index',
 					type: 'number',
 					label: 'Element Index',
-				}, {
+				},
+				{
 					id: 'title',
 					type: 'textinput',
 					label: 'Element title',
@@ -500,11 +497,11 @@ export function getActions() {
 					type: 'textinput',
 					label: 'Element custom key',
 				},
-        {
-          id: 'customValue',
-          type: 'textinput',
-          label: 'Element custom value',
-        }
+				{
+					id: 'customValue',
+					type: 'textinput',
+					label: 'Element custom value',
+				},
 			],
 			callback: async (event) => {
 				let cmd = ''
@@ -514,178 +511,172 @@ export function getActions() {
 				apiEndpoint = 'playout/jump'
 				if (opt.id) {
 					cmd = '?id=' + opt.id
-				}
-        else if (opt.title) {
-          cmd = '?title=' + opt.title
-        }
-        else if (opt.customKey && opt.customValue) {
-          cmd = '?custom-key=' + opt.customKey + '&custom-value=' + opt.customValue
-        }
-				else if (opt.customKey || opt.customValue) {
+				} else if (opt.title) {
+					cmd = '?title=' + opt.title
+				} else if (opt.customKey && opt.customValue) {
+					cmd = '?custom-key=' + opt.customKey + '&custom-value=' + opt.customValue
+				} else if (opt.customKey || opt.customValue) {
 					cmd = ''
+				} else {
+					cmd = '?index=' + opt.index
 				}
-        else {
-          cmd = '?index=' + opt.index
-        }
 
 				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'POST')
 			},
 		}
 
-    actions.scaling = {
-      name: 'Toggle output scaling',
-      options: [],
-      callback: async (event) => {
-        let cmd
-        let apiEndpoint = 'playout/scaling/set'
+		actions.scaling = {
+			name: 'Toggle output scaling',
+			options: [],
+			callback: async (event) => {
+				let cmd
+				let apiEndpoint = 'playout/scaling/set'
 
-          if (this.data.outputScalingEnabled) {
-            cmd = '?enabled=false'
-          } else {
-            cmd = '?enabled=true'
-          }
-        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'POST')
-      },
-    }
+				if (this.data.outputScalingEnabled) {
+					cmd = '?enabled=false'
+				} else {
+					cmd = '?enabled=true'
+				}
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'POST')
+			},
+		}
 	}
 
-	if (this.data.apiVersion >= 9)
-  {
-    actions.setGraphicsLayer = {
-      name: 'Set graphics layer status',
-      options: [
-        {
-          type: 'dropdown',
-          label: 'Graphics rundown element',
-          id: 'rundownElement',
-          tooltip: 'What graphics element do you want to modify?',
-          default: 'select',
-          choices: this.data.graphicsRundown.concat({ id: 'select', label: 'Select an element' }),
-        },
-        {
-          type: 'dropdown',
-          label: 'Status',
-          id: 'status',
-          tooltip: 'What is the desired status?',
-          default: 'toggle',
-          choices: [
-            {
-              id: 'toggle',
-              label: 'Toggle status',
-            },
-            {
-              id: 'start',
-              label: 'Start',
-            },
-            {
-              id: 'stop',
-              label: 'Stop',
-            },
-          ],
-        },
-      ],
-      callback: async (event) => {
-        let cmd
-        let apiEndpoint = 'graphics/layer'
+	if (this.data.apiVersion >= 9) {
+		actions.setGraphicsLayer = {
+			name: 'Set graphics layer status',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Graphics rundown element',
+					id: 'rundownElement',
+					tooltip: 'What graphics element do you want to modify?',
+					default: 'select',
+					choices: this.data.graphicsRundown.concat({ id: 'select', label: 'Select an element' }),
+				},
+				{
+					type: 'dropdown',
+					label: 'Status',
+					id: 'status',
+					tooltip: 'What is the desired status?',
+					default: 'toggle',
+					choices: [
+						{
+							id: 'toggle',
+							label: 'Toggle status',
+						},
+						{
+							id: 'start',
+							label: 'Start',
+						},
+						{
+							id: 'stop',
+							label: 'Stop',
+						},
+					],
+				},
+			],
+			callback: async (event) => {
+				let cmd
+				let apiEndpoint = 'graphics/layer'
 				let opt = event.options
 
-        cmd = '?index=' + opt.rundownElement
-        if (opt.status === 'start') {
-          cmd += '&status=true'
-        } else if (opt.status === 'stop'){
-          cmd += '&status=false'
-        }
+				cmd = '?index=' + opt.rundownElement
+				if (opt.status === 'start') {
+					cmd += '&status=true'
+				} else if (opt.status === 'stop') {
+					cmd += '&status=false'
+				}
 
-        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
-      },
-    }
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
+			},
+		}
 
-    actions.stopAllGraphics = {
-      name: 'Stop all graphics layers',
-      options: [],
-      callback: async (event) => {
-        let cmd
-        let apiEndpoint = 'graphics/stopAll'
+		actions.stopAllGraphics = {
+			name: 'Stop all graphics layers',
+			options: [],
+			callback: async (event) => {
+				let cmd
+				let apiEndpoint = 'graphics/stopAll'
 
-        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
-      },
-    }
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
+			},
+		}
 
-    actions.startAllGraphics = {
-      name: 'Start all graphics layers',
-      options: [],
-      callback: async (event) => {
-        let cmd
-        let apiEndpoint = 'graphics/startAll'
+		actions.startAllGraphics = {
+			name: 'Start all graphics layers',
+			options: [],
+			callback: async (event) => {
+				let cmd
+				let apiEndpoint = 'graphics/startAll'
 
-        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
-      },
-    }
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
+			},
+		}
 	}
 
-  if (this.data.apiVersion >= 10)
-  {
-    actions.clearAllGraphics = {
-      name: 'Clear graphics engine',
-      options: [],
-      callback: async (event) => {
-        let cmd
-        let apiEndpoint = 'graphics/clearAll'
+	if (this.data.apiVersion >= 10) {
+		actions.clearAllGraphics = {
+			name: 'Clear graphics engine',
+			options: [],
+			callback: async (event) => {
+				let cmd
+				let apiEndpoint = 'graphics/clearAll'
 
-        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
-      },
-    }
-  }
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
+			},
+		}
+	}
 
-  if (this.data.apiVersion >= 11)
-  {
-    actions.setPGMRecording = {
-      name: 'Set PGM recording',
-      options: [
-        {
-          type: 'dropdown',
-          label: 'Status',
-          id: 'status',
-          tooltip: 'What is the desired status?',
-          default: 'toggle',
-          choices: [
-            {
-              id: 'toggle',
-              label: 'Toggle',
-            },
-            {
-              id: 'start',
-              label: 'Start',
-            },
-            {
-              id: 'stop',
-              label: 'Stop',
-            },
-          ],
-        },
-      ],
-      callback: async (event) => {
-        let cmd = ''
-        let apiEndpoint
-        let opt = event.options
+	if (this.data.apiVersion >= 11) {
+		actions.setPGMRecording = {
+			name: 'Set PGM recording',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Status',
+					id: 'status',
+					tooltip: 'What is the desired status?',
+					default: 'toggle',
+					choices: [
+						{
+							id: 'toggle',
+							label: 'Toggle',
+						},
+						{
+							id: 'start',
+							label: 'Start',
+						},
+						{
+							id: 'stop',
+							label: 'Stop',
+						},
+					],
+				},
+			],
+			callback: async (event) => {
+				let cmd = ''
+				let apiEndpoint
+				let opt = event.options
 
-        if (opt.status === 'start') {
-          apiEndpoint = 'pgm-recording/start'
-        } else if (opt.status === 'stop'){
-          apiEndpoint = 'pgm-recording/stop'
-        } else if (this.data.pgmRecordingStartStamp > 0) {
-          apiEndpoint = 'pgm-recording/stop'
-        } else {
-          apiEndpoint = 'pgm-recording/start'
-        }
-        sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
-      },
-    }
-  }
+				if (opt.status === 'start') {
+					apiEndpoint = 'pgm-recording/start'
+				} else if (opt.status === 'stop') {
+					apiEndpoint = 'pgm-recording/stop'
+				} else if (this.data.pgmRecordingStartStamp > 0) {
+					apiEndpoint = 'pgm-recording/stop'
+				} else {
+					apiEndpoint = 'pgm-recording/start'
+				}
+				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
+			},
+		}
+	}
 
 	actions.reconfigure_connection = {
 		name: 'Reconfigure connection',
-		description: 'Change the current connection configuration to connect to a different instance of Schedule and/or with different credentials',
+		description:
+			'Change the current connection configuration to connect to a different instance of Schedule and/or with different credentials',
 		options: [
 			{
 				type: 'textinput',
@@ -714,7 +705,7 @@ export function getActions() {
 		],
 		callback: async (event) => {
 			const opt = event.options
-			
+
 			let newHost = opt.newHost
 			let newUsername = opt.newUsername
 			let newPassword = opt.newPassword

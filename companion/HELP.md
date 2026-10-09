@@ -17,7 +17,7 @@ To get a pair of credentials for the Schedule API, create a new user in the Sche
 the api user role to it. You can then use it to connect through this companion module.
 
 | Setting          | Description                                                                         |
-|------------------|-------------------------------------------------------------------------------------|
+| ---------------- | ----------------------------------------------------------------------------------- |
 | **Host**         | Enter the hostname of your Schedule instance. (Can be a variable)                   |
 | **API Username** | Enter the username of one of the Schedule instance's API Users. (Can be a variable) |
 | **API Password** | Enter the corresponding password. (Can be a variable)                               |
@@ -25,7 +25,7 @@ the api user role to it. You can then use it to connect through this companion m
 ## Actions
 
 | Action                      | Description                                                                                                                                          |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Toggle playback running** | Starts/stops the playback without publishing (timestamp can be set like in the Schedule UI).                                                         |
 | **Toggle publishing**       | Starts/stops publishing if the playback is running.                                                                                                  |
 | **Toggle push targets**     | Enables/disables push targets.                                                                                                                       |
@@ -51,7 +51,7 @@ the api user role to it. You can then use it to connect through this companion m
 ## Feedback available
 
 | Feedback                            | Description                                                                                          |
-|-------------------------------------|------------------------------------------------------------------------------------------------------|
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | **Playout running status**          | Shows whether the playback is running.                                                               |
 | **Publish status**                  | Shows whether the playback is not running/running/pushing.                                           |
 | **Targets publish status**          | Shows if the selected push targets are disabled/enabled/pushing/error.                               |
@@ -74,7 +74,7 @@ the api user role to it. You can then use it to connect through this companion m
 ## Variables
 
 | Variable                    | Description                                                                                        |
-|-----------------------------|----------------------------------------------------------------------------------------------------|
+| --------------------------- | -------------------------------------------------------------------------------------------------- |
 | **currentRemainingTime**    | Shows a timer with the remaining time for the current element                                      |
 | **totalPlayedTime**         | Shows a timer with the total played time of the rundown                                            |
 | **totalRemainingTime**      | Shows a timer with the total remaining time of the rundown                                         |
