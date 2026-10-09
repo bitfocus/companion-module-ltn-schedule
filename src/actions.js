@@ -163,12 +163,15 @@ export function getActions() {
 			default: 0,
 			range: false,
 		},
-		{
+	]
+
+	if (this.data.apiVersion >= 6) {
+		adOptions.push({
 			type: 'dropdown',
 			label: 'SCTE Trigger type',
 			id: 'triggerType',
 			tooltip: 'What type of SCTE35 trigger do you want to send?',
-			default: 'local',
+			default: 'LOCAL',
 			choices: [
 				{
 					id: 'LOCAL',
@@ -179,12 +182,8 @@ export function getActions() {
 					label: 'National',
 				},
 			],
-			isVisibleData: this.data.apiVersion >= 6,
-			isVisibleExpression: (opt, data) => {
-				return data
-			},
-		},
-	]
+		})
+	}
 
 	actions.playback_ad = {
 		name: 'Trigger an ad',
