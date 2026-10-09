@@ -214,7 +214,8 @@ export function initFeedbacks() {
 			if (this.data.adRunning != 0) {
 				return { color: options.fg, bgcolor: options.bgPushing }
 			} else if (
-				(this.data.currentItemType === 'livestream' || this.data.breakingNewsRunning || this.data.apiVersion > 3) && this.data.playoutRunning
+				(this.data.currentItemType === 'livestream' || this.data.breakingNewsRunning || this.data.apiVersion > 3) &&
+				this.data.playoutRunning
 			) {
 				return { color: options.fg, bgcolor: options.bgEnabled }
 			} else {
@@ -459,10 +460,13 @@ export function initFeedbacks() {
 					id: 'index',
 					type: 'number',
 					label: 'Element Index',
-				}
+				},
 			],
 			callback: ({ options }) => {
-				return (options.id && this.data.elementRunning === options.id) || (options.index && (this.data.elementRunningIndex + 1) === options.index)
+				return (
+					(options.id && this.data.elementRunning === options.id) ||
+					(options.index && this.data.elementRunningIndex + 1 === options.index)
+				)
 			},
 		}
 
@@ -494,8 +498,7 @@ export function initFeedbacks() {
 	}
 
 	if (this.data.apiVersion >= 8) {
-
-		const graphics =	{
+		const graphics = {
 			type: 'dropdown',
 			label: 'Graphics rundown',
 			id: 'graphicsRundownSelect',
@@ -513,27 +516,26 @@ export function initFeedbacks() {
 			},
 			options: [graphics],
 			callback: ({ options }) => {
-				const found = this.data.graphicsRundown.find(obj => obj.id === options.graphicsRundownSelect);
-				return (found.status === true)
+				const found = this.data.graphicsRundown.find((obj) => obj.id === options.graphicsRundownSelect)
+				return found.status === true
 			},
 		}
 	}
 
 	if (this.data.apiVersion >= 11) {
-
-    feedbacks.pgmRecordingStatus = {
-      type: 'boolean',
-      name: 'PGM Recording status',
-      description: 'Indicates if PGM recording is running',
-      defaultStyle: {
-        bgcolor: green,
-      },
-      options: [],
-      callback: ({ options }) => {
-        return this.data.pgmRecordingStartStamp > 0
-      },
-    }
+		feedbacks.pgmRecordingStatus = {
+			type: 'boolean',
+			name: 'PGM Recording status',
+			description: 'Indicates if PGM recording is running',
+			defaultStyle: {
+				bgcolor: green,
+			},
+			options: [],
+			callback: ({ options }) => {
+				return this.data.pgmRecordingStartStamp > 0
+			},
+		}
 	}
 
-		return feedbacks
+	return feedbacks
 }
