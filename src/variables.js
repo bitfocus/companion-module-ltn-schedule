@@ -38,7 +38,7 @@ export function updateVariables() {
 			adRemainingTime: remainingAd,
 			elementRunning: this.data.elementRunning,
 			elementRunningIndex: this.data.elementRunningIndex,
-			currentPlayedTime: msToTime(now - this.data.currentStartstamp),
+			currentPlayedTime: msToTime(this.data.currentStartstamp > 0 ? now - this.data.currentStartstamp : -1),
 			currentPgmRecordingTime: msToTime(
 				this.data.pgmRecordingStartStamp <= 0 ? -1 : now - this.data.pgmRecordingStartStamp,
 			),

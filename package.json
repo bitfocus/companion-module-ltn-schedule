@@ -1,7 +1,7 @@
 {
 	"name": "ltn-schedule",
-	"version": "2.7.2",
-	"main": "index.js",
+	"version": "2.7.3",
+	"main": "src/main.js",
 	"type": "module",
 	"scripts": {
 		"format": "prettier -w .",
