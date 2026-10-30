@@ -1,5 +1,5 @@
 import { combineRgb } from '@companion-module/base'
-import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black, yellow } from '../index.js'
+import { lightBlue, lightBlueDisabled, darkGrey, lightGrey, green, red, black, yellow } from './main.js'
 
 export function initFeedbacks() {
 	const feedbacks = {}

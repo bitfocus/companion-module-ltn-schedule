@@ -53,7 +53,7 @@ export function getActions() {
 			],
 			callback: async (event) => {
 				let opt = event.options
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				if (this.data.playoutRunning) {
@@ -74,7 +74,7 @@ export function getActions() {
 			name: 'Toggle publishing',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				if (this.data.playoutRunning) {
@@ -105,7 +105,7 @@ export function getActions() {
 			],
 			callback: async (event) => {
 				let opt = event.options
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				let actualSelectedTargets = opt.targetsSelect.filter((target) => target !== 'select')
@@ -129,7 +129,7 @@ export function getActions() {
 			options: [skipOption],
 			callback: async (event) => {
 				let opt = event.options
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				if (!this.data.skipUsed) {
@@ -190,7 +190,7 @@ export function getActions() {
 		options: adOptions,
 		callback: async (event) => {
 			let opt = event.options
-			let cmd
+			let cmd = ''
 			let apiEndpoint
 
 			if (
@@ -215,7 +215,7 @@ export function getActions() {
 			options: [],
 			callback: async (event) => {
 				let opt = event.options
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				if (!this.data.breakingNewsRunning) {
@@ -234,7 +234,7 @@ export function getActions() {
 			options: breakingNewsOptions,
 			callback: async (event) => {
 				let opt = event.options
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				if (this.data.bumperRunning && this.data.apiVersion >= 7) {
@@ -269,7 +269,7 @@ export function getActions() {
 			name: 'Cancel an ad',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				apiEndpoint = 'playout/cancelad'
@@ -285,7 +285,7 @@ export function getActions() {
 			name: 'Toggle overlay',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 				let type
 
@@ -316,7 +316,7 @@ export function getActions() {
 			],
 			callback: async (event) => {
 				let opt = event.options
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				if (!this.data.htmlOverlayEnabled) {
@@ -406,7 +406,7 @@ export function getActions() {
 			],
 			callback: async (event) => {
 				let opt = event.options
-				let cmd
+				let cmd = ''
 
 				cmd =
 					'?id=' +
@@ -462,7 +462,7 @@ export function getActions() {
 			name: 'Resync systems',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint
 
 				apiEndpoint = 'playout/resync'
@@ -529,7 +529,7 @@ export function getActions() {
 			name: 'Toggle output scaling',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint = 'playout/scaling/set'
 
 				if (this.data.outputScalingEnabled) {
@@ -577,7 +577,7 @@ export function getActions() {
 				},
 			],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint = 'graphics/layer'
 				let opt = event.options
 
@@ -596,7 +596,7 @@ export function getActions() {
 			name: 'Stop all graphics layers',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint = 'graphics/stopAll'
 
 				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
@@ -607,7 +607,7 @@ export function getActions() {
 			name: 'Start all graphics layers',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint = 'graphics/startAll'
 
 				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
@@ -620,7 +620,7 @@ export function getActions() {
 			name: 'Clear graphics engine',
 			options: [],
 			callback: async (event) => {
-				let cmd
+				let cmd = ''
 				let apiEndpoint = 'graphics/clearAll'
 
 				sendAction.bind(this)(apiEndpoint, cmd, null, null, 'GET')
@@ -706,16 +706,9 @@ export function getActions() {
 		callback: async (event) => {
 			const opt = event.options
 
-			let newHost = opt.newHost
-			let newUsername = opt.newUsername
-			let newPassword = opt.newPassword
-
-			// compatibility with API 1.14 and below
-			if (typeof this.parseVariablesInString === 'function') {
-				newHost = await this.parseVariablesInString(newHost)
-				newUsername = await this.parseVariablesInString(newUsername)
-				newPassword = await this.parseVariablesInString(newPassword)
-			}
+			const newHost = opt.newHost
+			const newUsername = opt.newUsername
+			const newPassword = opt.newPassword
 
 			if (newHost !== '') this.config.host = newHost
 			if (newUsername !== '') this.config.username = newUsername

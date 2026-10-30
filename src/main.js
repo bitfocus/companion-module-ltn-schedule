@@ -1,11 +1,11 @@
-import { CreateConvertToBooleanFeedbackUpgradeScript, InstanceBase, combineRgb } from '@companion-module/base'
+import { InstanceBase, combineRgb } from '@companion-module/base'
 
-import { getActions } from './src/actions.js'
-import { initAPI } from './src/api.js'
-import { getConfigFields } from './src/config.js'
-import { initFeedbacks } from './src/feedback.js'
-import { updateVariableDefinitions, updateVariables } from './src/variables.js'
-import { initPresets } from './src/presets.js'
+import { getActions } from './actions.js'
+import { initAPI } from './api.js'
+import { getConfigFields } from './config.js'
+import { initFeedbacks } from './feedback.js'
+import { updateVariableDefinitions, updateVariables } from './variables.js'
+import { initPresets } from './presets.js'
 
 export const lightBlue = combineRgb(91, 198, 233)
 export const lightBlueDisabled = combineRgb(32, 92, 111)
@@ -173,10 +173,47 @@ class LTNScheduleInstance extends InstanceBase {
 	}
 }
 
-export const UpgradeScripts = [
-	CreateConvertToBooleanFeedbackUpgradeScript({
-		playbackStatus: true,
-	}),
-]
+/**
+ * Converts the old advanced 'playbackStatus' feedback (bg/fg options) to a boolean feedback.
+ * Under API 2.x option values are wrapped as { isExpression, value }, so the plain colour is unwrapped here.
+ */
+function convertPlaybackStatusToBoolean(_context, props) {
+	const optionToStyle = { bg: 'bgcolor', fg: 'color' }
+	const updatedFeedbacks = []
+
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId !== 'playbackStatus') continue
+
+		let changed = false
+		for (const [optionKey, styleKey] of Object.entries(optionToStyle)) {
+			const option = feedback.options[optionKey]
+			if (option === undefined) continue
+
+			if (option !== null && typeof option === 'object' && 'isExpression' in option) {
+				if (!option.isExpression && typeof option.value === 'number') {
+					if (!feedback.style) feedback.style = {}
+					feedback.style[styleKey] = option.value
+				}
+			} else if (typeof option === 'number') {
+				if (!feedback.style) feedback.style = {}
+				feedback.style[styleKey] = option
+			}
+
+			delete feedback.options[optionKey]
+			changed = true
+		}
+
+		if (changed) updatedFeedbacks.push(feedback)
+	}
+
+	return {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks,
+	}
+}
+
+export const UpgradeScripts = [convertPlaybackStatusToBoolean]
 
 export default LTNScheduleInstance
